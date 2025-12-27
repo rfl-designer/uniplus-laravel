@@ -5,6 +5,23 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.3.0] - 2025-12-27
+
+### Corrigido
+
+- **Mapeamentos de endpoints Commons** corrigidos para corresponder à API real:
+  - `motivoAcertoEstoque()` agora chama `/commons/tipodocumentoestoque` (era `/commons/motivoacertoestoque`)
+  - `motivoCancelamentoOperacao()` agora chama `/commons/motivocancelamentooperacao` (renomeado de `motivoCancelamentoPdv`)
+  - `motivoSangriaSuprimento()` agora chama `/commons/motivosangriasuprimento` (renomeado de `motivoSangria`)
+  - `cfop()` agora chama `/commons/cfop` (renomeado de `naturezaOperacao`)
+  - `desmontagemNotaFiscal()` agora chama `/commons/desmontagemnotafiscal` (renomeado de `notaFiscalDesmontagem`)
+  - `tipoEntidadeOperacaoFiscal()` agora chama `/commons/tipoentidadeoperacaofiscal` (renomeado de `tipoEntidadeOperacao`)
+  - `tipoInformacaoAdicionalApur()` agora chama `/commons/tipoinformacaoadicionalapur` (renomeado de `tipoInformacaoAdicional`)
+
+### Adicionado
+
+- **7 novos testes** para validar os mapeamentos corrigidos
+
 ## [1.2.0] - 2025-12-27
 
 ### Adicionado
@@ -85,6 +102,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - PHP 8.3+
 - Laravel 11.x e 12.x
 
+[1.3.0]: https://github.com/rfl-designer/uniplus-laravel/releases/tag/v1.3.0
 [1.2.0]: https://github.com/rfl-designer/uniplus-laravel/releases/tag/v1.2.0
 [1.1.0]: https://github.com/rfl-designer/uniplus-laravel/releases/tag/v1.1.0
 [1.0.0]: https://github.com/rfl-designer/uniplus-laravel/releases/tag/v1.0.0

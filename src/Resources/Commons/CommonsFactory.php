@@ -52,12 +52,12 @@ use Uniplus\Http\Client;
  * @method CommonsResource meioTransporte() Get Transport Means resource
  * @method CommonsResource motivoAcertoEstoque() Get Stock Adjustment Reasons resource
  * @method CommonsResource motivoBaixaFinanceiro() Get Financial Write-off Reasons resource
- * @method CommonsResource motivoCancelamentoPdv() Get POS Cancellation Reasons resource
+ * @method CommonsResource motivoCancelamentoOperacao() Get POS Operation Cancellation Reasons resource
  * @method CommonsResource motivoDesconto() Get Discount Reasons resource
  * @method CommonsResource motivoRebaixa() Get Markdown Reasons resource
- * @method CommonsResource motivoSangria() Get Cash Withdrawal Reasons resource
- * @method CommonsResource naturezaOperacao() Get Operation Natures resource
- * @method CommonsResource notaFiscalDesmontagem() Get Disassembly Invoices resource
+ * @method CommonsResource motivoSangriaSuprimento() Get Cash Withdrawal/Supply Reasons resource
+ * @method CommonsResource cfop() Get CFOP (Fiscal Operation Codes) resource
+ * @method CommonsResource desmontagemNotaFiscal() Get Disassembly Invoices resource
  * @method CommonsResource observacaoLancamentoFiscal() Get Tax Entry Notes resource
  * @method CommonsResource pais() Get Countries resource
  * @method CommonsResource pautaPreco() Get Price Lists resource
@@ -74,9 +74,9 @@ use Uniplus\Http\Client;
  * @method CommonsResource tipoCobranca() Get Billing Types resource
  * @method CommonsResource tipoContato() Get Contact Types resource
  * @method CommonsResource tipoCredito() Get Credit Types resource
- * @method CommonsResource tipoEntidadeOperacao() Get Entity Operation Types resource
+ * @method CommonsResource tipoEntidadeOperacaoFiscal() Get Entity Fiscal Operation Types resource
  * @method CommonsResource tipoHistoricoContato() Get Contact History Types resource
- * @method CommonsResource tipoInformacaoAdicional() Get Additional Info Types resource
+ * @method CommonsResource tipoInformacaoAdicionalApur() Get Additional Assessment Info Types resource
  * @method CommonsResource tipoPedido() Get Order Types resource
  * @method CommonsResource unidadeMedida() Get Units of Measure resource
  * @method CommonsResource usuario() Get Users resource
@@ -129,14 +129,14 @@ class CommonsFactory
         'localRetirada' => 'localretirada',
         'marca' => 'marca',
         'meioTransporte' => 'meiotransporte',
-        'motivoAcertoEstoque' => 'motivoacertoestoque',
+        'motivoAcertoEstoque' => 'tipodocumentoestoque',
         'motivoBaixaFinanceiro' => 'motivobaixafinanceiro',
-        'motivoCancelamentoPdv' => 'motivocancelamentopdv',
+        'motivoCancelamentoOperacao' => 'motivocancelamentooperacao',
         'motivoDesconto' => 'motivodesconto',
         'motivoRebaixa' => 'motivorebaixa',
-        'motivoSangria' => 'motivosangria',
-        'naturezaOperacao' => 'naturezaoperacao',
-        'notaFiscalDesmontagem' => 'notafiscaldesmontagem',
+        'motivoSangriaSuprimento' => 'motivosangriasuprimento',
+        'cfop' => 'cfop',
+        'desmontagemNotaFiscal' => 'desmontagemnotafiscal',
         'observacaoLancamentoFiscal' => 'observacaolancamentofiscal',
         'pais' => 'pais',
         'pautaPreco' => 'pautapreco',
@@ -153,9 +153,9 @@ class CommonsFactory
         'tipoCobranca' => 'tipocobranca',
         'tipoContato' => 'tipocontato',
         'tipoCredito' => 'tipocredito',
-        'tipoEntidadeOperacao' => 'tipoentidadeoperacao',
+        'tipoEntidadeOperacaoFiscal' => 'tipoentidadeoperacaofiscal',
         'tipoHistoricoContato' => 'tipohistoricocontato',
-        'tipoInformacaoAdicional' => 'tipoinformacaoadicional',
+        'tipoInformacaoAdicionalApur' => 'tipoinformacaoadicionalapur',
         'tipoPedido' => 'tipopedido',
         'unidadeMedida' => 'unidademedida',
         'usuario' => 'usuario',

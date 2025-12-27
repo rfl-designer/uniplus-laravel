@@ -669,6 +669,70 @@ describe('CommonsResource', function () {
 
         expect($resource->getTable())->toBe('cidade');
     });
+
+    // Tests for corrected endpoint mappings (v1.3.0)
+    it('maps motivoAcertoEstoque to tipodocumentoestoque endpoint', function () {
+        $manager = app(UniplusManager::class);
+        $resource = $manager->commons()->motivoAcertoEstoque();
+
+        expect($resource)->toBeInstanceOf(CommonsResource::class)
+            ->and($resource->getEndpoint())->toBe('public-api/v1/commons/tipodocumentoestoque')
+            ->and($resource->getTable())->toBe('tipodocumentoestoque');
+    });
+
+    it('maps cfop to cfop endpoint', function () {
+        $manager = app(UniplusManager::class);
+        $resource = $manager->commons()->cfop();
+
+        expect($resource)->toBeInstanceOf(CommonsResource::class)
+            ->and($resource->getEndpoint())->toBe('public-api/v1/commons/cfop')
+            ->and($resource->getTable())->toBe('cfop');
+    });
+
+    it('maps motivoCancelamentoOperacao to motivocancelamentooperacao endpoint', function () {
+        $manager = app(UniplusManager::class);
+        $resource = $manager->commons()->motivoCancelamentoOperacao();
+
+        expect($resource)->toBeInstanceOf(CommonsResource::class)
+            ->and($resource->getEndpoint())->toBe('public-api/v1/commons/motivocancelamentooperacao')
+            ->and($resource->getTable())->toBe('motivocancelamentooperacao');
+    });
+
+    it('maps motivoSangriaSuprimento to motivosangriasuprimento endpoint', function () {
+        $manager = app(UniplusManager::class);
+        $resource = $manager->commons()->motivoSangriaSuprimento();
+
+        expect($resource)->toBeInstanceOf(CommonsResource::class)
+            ->and($resource->getEndpoint())->toBe('public-api/v1/commons/motivosangriasuprimento')
+            ->and($resource->getTable())->toBe('motivosangriasuprimento');
+    });
+
+    it('maps desmontagemNotaFiscal to desmontagemnotafiscal endpoint', function () {
+        $manager = app(UniplusManager::class);
+        $resource = $manager->commons()->desmontagemNotaFiscal();
+
+        expect($resource)->toBeInstanceOf(CommonsResource::class)
+            ->and($resource->getEndpoint())->toBe('public-api/v1/commons/desmontagemnotafiscal')
+            ->and($resource->getTable())->toBe('desmontagemnotafiscal');
+    });
+
+    it('maps tipoEntidadeOperacaoFiscal to tipoentidadeoperacaofiscal endpoint', function () {
+        $manager = app(UniplusManager::class);
+        $resource = $manager->commons()->tipoEntidadeOperacaoFiscal();
+
+        expect($resource)->toBeInstanceOf(CommonsResource::class)
+            ->and($resource->getEndpoint())->toBe('public-api/v1/commons/tipoentidadeoperacaofiscal')
+            ->and($resource->getTable())->toBe('tipoentidadeoperacaofiscal');
+    });
+
+    it('maps tipoInformacaoAdicionalApur to tipoinformacaoadicionalapur endpoint', function () {
+        $manager = app(UniplusManager::class);
+        $resource = $manager->commons()->tipoInformacaoAdicionalApur();
+
+        expect($resource)->toBeInstanceOf(CommonsResource::class)
+            ->and($resource->getEndpoint())->toBe('public-api/v1/commons/tipoinformacaoadicionalapur')
+            ->and($resource->getTable())->toBe('tipoinformacaoadicionalapur');
+    });
 });
 
 // =============================================================================
