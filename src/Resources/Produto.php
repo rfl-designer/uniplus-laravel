@@ -51,4 +51,48 @@ class Produto extends Resource
     {
         return $this->where('codigoMarca', $brandCode);
     }
+
+    /**
+     * Update prices for multiple products at once.
+     *
+     * @param  array<int, array{codigo: string, preco?: float, precos?: array<int, array{filial: string, preco: float, pautasPreco?: array<int, array{codigoPauta: string, preco: float}>}>}>  $products
+     * @return array<string, mixed>
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function updatePrecos(array $products): array
+    {
+        if (empty($products)) {
+            throw new \InvalidArgumentException('Products array cannot be empty.');
+        }
+
+        $response = $this->client->post('public-api/v1/produtos/precos', $products);
+
+        /** @var array<string, mixed> $result */
+        $result = $response->json() ?? [];
+
+        return $result;
+    }
+
+    /**
+     * Create multiple products at once.
+     *
+     * @param  array<int, array<string, mixed>>  $products
+     * @return array<string, mixed>
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function createMany(array $products): array
+    {
+        if (empty($products)) {
+            throw new \InvalidArgumentException('Products array cannot be empty.');
+        }
+
+        $response = $this->client->post('public-api/v1/produtos/lista', $products);
+
+        /** @var array<string, mixed> $result */
+        $result = $response->json() ?? [];
+
+        return $result;
+    }
 }

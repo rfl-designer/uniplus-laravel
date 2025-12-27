@@ -5,6 +5,18 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.2.0] - 2025-12-27
+
+### Adicionado
+
+- **Operações em Lote para Produtos:**
+  - `Produto::updatePrecos()` - Atualização de preços em massa para múltiplos produtos
+  - `Produto::createMany()` - Criação de múltiplos produtos de uma vez
+  - Suporte a preços por filial e pautas de preço no `updatePrecos()`
+  - Validação de array vazio com `InvalidArgumentException`
+
+- **5 novos testes** para os métodos bulk (total: 377 testes)
+
 ## [1.1.0] - 2025-12-27
 
 ### Adicionado
@@ -73,5 +85,6 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - PHP 8.3+
 - Laravel 11.x e 12.x
 
+[1.2.0]: https://github.com/rfl-designer/uniplus-laravel/releases/tag/v1.2.0
 [1.1.0]: https://github.com/rfl-designer/uniplus-laravel/releases/tag/v1.1.0
 [1.0.0]: https://github.com/rfl-designer/uniplus-laravel/releases/tag/v1.0.0

@@ -179,6 +179,103 @@ describe('Produto Resource', function () {
 
         expect($builder->toQueryString())->toContain('currentTimeMillis.ge=1704067200000');
     });
+
+    it('can update prices for multiple products', function () {
+        Http::fake([
+            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/produtos/precos' => Http::response([
+                'success' => true,
+                'updated' => 2,
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $result = $manager->produtos()->updatePrecos([
+            ['codigo' => '001', 'preco' => 99.90],
+            ['codigo' => '002', 'preco' => 149.90],
+        ]);
+
+        expect($result['success'])->toBeTrue()
+            ->and($result['updated'])->toBe(2);
+    });
+
+    it('can update prices with branch-specific pricing', function () {
+        Http::fake([
+            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/produtos/precos' => Http::response([
+                'success' => true,
+                'updated' => 1,
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $result = $manager->produtos()->updatePrecos([
+            [
+                'codigo' => '001',
+                'precos' => [
+                    [
+                        'filial' => '1',
+                        'preco' => 99.90,
+                        'pautasPreco' => [
+                            ['codigoPauta' => '1', 'preco' => 89.90],
+                            ['codigoPauta' => '2', 'preco' => 94.90],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        expect($result['success'])->toBeTrue();
+    });
+
+    it('throws exception when updatePrecos receives empty array', function () {
+        $manager = app(UniplusManager::class);
+        $manager->produtos()->updatePrecos([]);
+    })->throws(\InvalidArgumentException::class, 'Products array cannot be empty.');
+
+    it('can create multiple products at once', function () {
+        Http::fake([
+            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/produtos/lista' => Http::response([
+                'success' => true,
+                'created' => 2,
+                'products' => [
+                    ['codigo' => '001', 'nome' => 'Produto 1'],
+                    ['codigo' => '002', 'nome' => 'Produto 2'],
+                ],
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $result = $manager->produtos()->createMany([
+            ['nome' => 'Produto 1', 'preco' => 99.90, 'unidadeMedida' => 'UN'],
+            ['nome' => 'Produto 2', 'preco' => 149.90, 'unidadeMedida' => 'UN'],
+        ]);
+
+        expect($result['success'])->toBeTrue()
+            ->and($result['created'])->toBe(2)
+            ->and($result['products'])->toHaveCount(2);
+    });
+
+    it('throws exception when createMany receives empty array', function () {
+        $manager = app(UniplusManager::class);
+        $manager->produtos()->createMany([]);
+    })->throws(\InvalidArgumentException::class, 'Products array cannot be empty.');
 });
 
 describe('Entidade Resource', function () {

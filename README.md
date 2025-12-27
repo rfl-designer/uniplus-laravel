@@ -124,6 +124,41 @@ $alterados = Uniplus::produtos()
     ->get();
 ```
 
+#### Operações em Lote (Bulk)
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Atualizar preços de múltiplos produtos de uma vez
+Uniplus::produtos()->updatePrecos([
+    ['codigo' => '001', 'preco' => 99.90],
+    ['codigo' => '002', 'preco' => 149.90],
+]);
+
+// Atualizar preços com preços por filial e pautas de preço
+Uniplus::produtos()->updatePrecos([
+    [
+        'codigo' => '001',
+        'precos' => [
+            [
+                'filial' => '1',
+                'preco' => 99.90,
+                'pautasPreco' => [
+                    ['codigoPauta' => '1', 'preco' => 89.90],
+                    ['codigoPauta' => '2', 'preco' => 94.90],
+                ],
+            ],
+        ],
+    ],
+]);
+
+// Criar múltiplos produtos de uma vez
+Uniplus::produtos()->createMany([
+    ['nome' => 'Produto 1', 'preco' => 99.90, 'unidadeMedida' => 'UN'],
+    ['nome' => 'Produto 2', 'preco' => 149.90, 'unidadeMedida' => 'UN'],
+]);
+```
+
 ### Entidades (Clientes, Fornecedores, etc.)
 
 ```php

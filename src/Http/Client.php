@@ -55,7 +55,7 @@ class Client
     /**
      * Make a POST request.
      *
-     * @param  array<string, mixed>  $data
+     * @param  array<array-key, mixed>  $data
      */
     public function post(string $endpoint, array $data = []): Response
     {
@@ -96,7 +96,7 @@ class Client
     /**
      * Make an HTTP request.
      *
-     * @param  array{query?: array<string, mixed>, json?: array<string, mixed>}  $options
+     * @param  array{query?: array<string, mixed>, json?: array<array-key, mixed>}  $options
      */
     protected function request(string $method, string $endpoint, array $options = []): Response
     {
@@ -122,7 +122,7 @@ class Client
             /** @var array<string, mixed> $queryData */
             $queryData = $options['query'] ?? [];
 
-            /** @var array<string, mixed> $jsonData */
+            /** @var array<array-key, mixed> $jsonData */
             $jsonData = $options['json'] ?? [];
 
             $httpResponse = match ($method) {
