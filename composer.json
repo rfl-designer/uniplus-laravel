@@ -22,7 +22,7 @@
         "source": "https://github.com/rfl-designer/uniplus-laravel"
     },
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "illuminate/support": "^11.0|^12.0",
         "illuminate/http": "^11.0|^12.0",
         "illuminate/cache": "^11.0|^12.0",

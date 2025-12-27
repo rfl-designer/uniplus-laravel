@@ -3,7 +3,7 @@
 [![Tests](https://github.com/rfl-designer/uniplus-laravel/actions/workflows/tests.yml/badge.svg)](https://github.com/rfl-designer/uniplus-laravel/actions/workflows/tests.yml)
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%209-brightgreen.svg)](https://phpstan.org/)
 [![Laravel](https://img.shields.io/badge/Laravel-11.x%20%7C%2012.x-orange.svg)](https://laravel.com)
-[![PHP](https://img.shields.io/badge/PHP-8.2%2B-blue.svg)](https://php.net)
+[![PHP](https://img.shields.io/badge/PHP-8.3%2B-blue.svg)](https://php.net)
 
 Pacote Laravel para integração com a API do Uniplus ERP.
 

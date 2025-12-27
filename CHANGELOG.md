@@ -39,7 +39,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ### Suporte
 
-- PHP 8.2+
+- PHP 8.3+
 - Laravel 11.x e 12.x
 
 [1.0.0]: https://github.com/rfl-designer/uniplus-laravel/releases/tag/v1.0.0
