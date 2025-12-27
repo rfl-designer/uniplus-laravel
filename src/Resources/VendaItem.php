@@ -122,21 +122,21 @@ class VendaItem extends Resource
     public function create(array $data): array
     {
         throw new \Uniplus\Exceptions\UniplusException(
-            'VendaItem resource is read-only.'
+            'VendaItem resource is read-only.',
         );
     }
 
     public function update(array $data): array
     {
         throw new \Uniplus\Exceptions\UniplusException(
-            'VendaItem resource is read-only.'
+            'VendaItem resource is read-only.',
         );
     }
 
     public function delete(string $code): bool
     {
         throw new \Uniplus\Exceptions\UniplusException(
-            'VendaItem resource is read-only.'
+            'VendaItem resource is read-only.',
         );
     }
 }

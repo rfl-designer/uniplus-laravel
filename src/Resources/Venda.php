@@ -103,21 +103,21 @@ class Venda extends Resource
     public function create(array $data): array
     {
         throw new \Uniplus\Exceptions\UniplusException(
-            'Venda resource is read-only. Use DAV to create sales.'
+            'Venda resource is read-only. Use DAV to create sales.',
         );
     }
 
     public function update(array $data): array
     {
         throw new \Uniplus\Exceptions\UniplusException(
-            'Venda resource is read-only.'
+            'Venda resource is read-only.',
         );
     }
 
     public function delete(string $code): bool
     {
         throw new \Uniplus\Exceptions\UniplusException(
-            'Venda resource is read-only.'
+            'Venda resource is read-only.',
         );
     }
 }

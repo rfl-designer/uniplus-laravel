@@ -7,10 +7,6 @@ use Illuminate\Support\Facades\Http;
 use Uniplus\Query\Builder;
 use Uniplus\Resources\Dav;
 use Uniplus\Resources\Entidade;
-use Uniplus\Resources\Produto;
-use Uniplus\Resources\SaldoEstoque;
-use Uniplus\Resources\Venda;
-use Uniplus\Resources\VendaItem;
 use Uniplus\UniplusManager;
 
 beforeEach(function () {

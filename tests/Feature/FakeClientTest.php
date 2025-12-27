@@ -45,7 +45,7 @@ describe('FakeClient', function () {
     });
 
     it('records requests', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         $fakeClient->record('GET', '/produtos', []);
         $fakeClient->record('POST', '/entidades', ['name' => 'Test']);
@@ -60,7 +60,7 @@ describe('FakeClient', function () {
     });
 
     it('asserts request was sent', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         $fakeClient->record('GET', '/produtos', []);
 
@@ -69,14 +69,14 @@ describe('FakeClient', function () {
     });
 
     it('fails assertion when request was not sent', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         expect(fn () => $fakeClient->assertSent('GET', '/produtos'))
             ->toThrow(\PHPUnit\Framework\AssertionFailedError::class);
     });
 
     it('asserts request was not sent', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         $fakeClient->record('GET', '/produtos', []);
 
@@ -85,7 +85,7 @@ describe('FakeClient', function () {
     });
 
     it('fails assertion when request was unexpectedly sent', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         $fakeClient->record('GET', '/produtos', []);
 
@@ -94,7 +94,7 @@ describe('FakeClient', function () {
     });
 
     it('asserts correct request count', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         $fakeClient->record('GET', '/produtos', []);
         $fakeClient->record('POST', '/entidades', []);
@@ -105,7 +105,7 @@ describe('FakeClient', function () {
     });
 
     it('fails assertion for incorrect request count', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         $fakeClient->record('GET', '/produtos', []);
 
@@ -114,14 +114,14 @@ describe('FakeClient', function () {
     });
 
     it('asserts nothing was sent', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         // This should not throw
         $fakeClient->assertNothingSent();
     });
 
     it('fails assertion when something was sent but nothing expected', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         $fakeClient->record('GET', '/produtos', []);
 
@@ -130,7 +130,7 @@ describe('FakeClient', function () {
     });
 
     it('returns recorded requests as collection', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         $fakeClient->record('GET', '/produtos', []);
         $fakeClient->record('POST', '/entidades', []);
@@ -142,7 +142,7 @@ describe('FakeClient', function () {
     });
 
     it('can clear recorded requests', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         $fakeClient->record('GET', '/produtos', []);
         $fakeClient->record('POST', '/entidades', []);
@@ -153,7 +153,7 @@ describe('FakeClient', function () {
     });
 
     it('can add response after construction', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         $fakeClient->addResponse('produtos', ['id' => 1, 'name' => 'New Product']);
 
@@ -175,7 +175,7 @@ describe('FakeClient', function () {
     });
 
     it('returns fluent interface from addResponse', function () {
-        $fakeClient = new FakeClient();
+        $fakeClient = new FakeClient;
 
         $result = $fakeClient
             ->addResponse('produtos', ['id' => 1])

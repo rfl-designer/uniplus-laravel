@@ -9,10 +9,7 @@ use Uniplus\Connections\RemoteConnection;
 use Uniplus\Events\RequestFailed;
 use Uniplus\Events\RequestSending;
 use Uniplus\Events\RequestSent;
-use Uniplus\Exceptions\AuthenticationException;
 use Uniplus\Exceptions\ConnectionException;
-use Uniplus\Exceptions\NotFoundException;
-use Uniplus\Exceptions\ValidationException;
 use Uniplus\Http\Client;
 use Uniplus\Http\Response;
 

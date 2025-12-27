@@ -10,7 +10,7 @@ class NotFoundException extends UniplusException
     {
         return new self(
             "Resource '{$resource}' with identifier '{$identifier}' not found",
-            404
+            404,
         );
     }
 }

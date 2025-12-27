@@ -82,7 +82,7 @@ class FakeClient
 
         Assert::assertTrue(
             $found,
-            "Expected [{$method}] request to [{$url}] was not sent."
+            "Expected [{$method}] request to [{$url}] was not sent.",
         );
     }
 
@@ -97,7 +97,7 @@ class FakeClient
 
         Assert::assertFalse(
             $found,
-            "Unexpected request to [{$url}] was sent."
+            "Unexpected request to [{$url}] was sent.",
         );
     }
 
@@ -111,7 +111,7 @@ class FakeClient
         Assert::assertEquals(
             $count,
             $actualCount,
-            "Expected {$count} requests to be sent, but {$actualCount} were sent."
+            "Expected {$count} requests to be sent, but {$actualCount} were sent.",
         );
     }
 

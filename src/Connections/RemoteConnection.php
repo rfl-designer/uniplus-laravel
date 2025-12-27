@@ -55,7 +55,7 @@ class RemoteConnection extends Connection
 
             if ($response->failed()) {
                 throw new ConnectionException(
-                    "Failed to resolve server URL for account '{$this->account}': ".$response->body()
+                    "Failed to resolve server URL for account '{$this->account}': ".$response->body(),
                 );
             }
 
@@ -63,7 +63,7 @@ class RemoteConnection extends Connection
 
             if ($serverUrl === '') {
                 throw new ConnectionException(
-                    "Empty server URL returned for account '{$this->account}'"
+                    "Empty server URL returned for account '{$this->account}'",
                 );
             }
 

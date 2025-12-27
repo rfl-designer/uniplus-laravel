@@ -98,7 +98,7 @@ class TokenManager
 
             throw new AuthenticationException(
                 'Failed to obtain access token: '.$response->body(),
-                $response->status()
+                $response->status(),
             );
         }
 
@@ -107,7 +107,7 @@ class TokenManager
 
         if (! is_array($data) || ! isset($data['access_token'])) {
             throw new AuthenticationException(
-                'Invalid token response: access_token not found'
+                'Invalid token response: access_token not found',
             );
         }
 
