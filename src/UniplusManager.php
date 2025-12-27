@@ -7,10 +7,23 @@ namespace Uniplus;
 use Illuminate\Contracts\Foundation\Application;
 use Uniplus\Connections\RemoteConnection;
 use Uniplus\Exceptions\ConnectionException;
+use Uniplus\Resources\Commons\CommonsFactory;
+use Uniplus\Resources\ContaGourmet;
 use Uniplus\Resources\Dav;
+use Uniplus\Resources\Ean;
+use Uniplus\Resources\Embalagem;
 use Uniplus\Resources\Entidade;
+use Uniplus\Resources\GrupoShop;
+use Uniplus\Resources\ItemNotaEntrada;
+use Uniplus\Resources\ItemNotaEntradaCompra;
+use Uniplus\Resources\MovimentacaoEstoque;
+use Uniplus\Resources\OrdemServico;
 use Uniplus\Resources\Produto;
+use Uniplus\Resources\RegistroProducao;
 use Uniplus\Resources\SaldoEstoque;
+use Uniplus\Resources\SaldoEstoqueVariacao;
+use Uniplus\Resources\TipoDocumentoFinanceiro;
+use Uniplus\Resources\Variacao;
 use Uniplus\Resources\Venda;
 use Uniplus\Resources\VendaItem;
 use Uniplus\Testing\FakeClient;
@@ -194,7 +207,9 @@ class UniplusManager
         $this->fakeClient->assertSentCount($count);
     }
 
-    // Proxy methods to default connection
+    // =========================================================================
+    // Proxy methods to default connection - Core Resources
+    // =========================================================================
 
     /**
      * Get the Produto resource from the default connection.
@@ -242,5 +257,121 @@ class UniplusManager
     public function vendaItens(): VendaItem
     {
         return $this->connection()->vendaItens();
+    }
+
+    // =========================================================================
+    // Proxy methods - Individual Resources (Phase 1)
+    // =========================================================================
+
+    /**
+     * Get the GrupoShop resource from the default connection.
+     */
+    public function grupoShop(): GrupoShop
+    {
+        return $this->connection()->grupoShop();
+    }
+
+    /**
+     * Get the OrdemServico resource from the default connection.
+     */
+    public function ordemServico(): OrdemServico
+    {
+        return $this->connection()->ordemServico();
+    }
+
+    /**
+     * Get the Ean resource from the default connection.
+     */
+    public function eans(): Ean
+    {
+        return $this->connection()->eans();
+    }
+
+    /**
+     * Get the Embalagem resource from the default connection.
+     */
+    public function embalagens(): Embalagem
+    {
+        return $this->connection()->embalagens();
+    }
+
+    /**
+     * Get the RegistroProducao resource from the default connection.
+     */
+    public function registroProducao(): RegistroProducao
+    {
+        return $this->connection()->registroProducao();
+    }
+
+    /**
+     * Get the Variacao resource from the default connection.
+     */
+    public function variacoes(): Variacao
+    {
+        return $this->connection()->variacoes();
+    }
+
+    /**
+     * Get the ItemNotaEntrada resource from the default connection.
+     */
+    public function itemNotaEntrada(): ItemNotaEntrada
+    {
+        return $this->connection()->itemNotaEntrada();
+    }
+
+    /**
+     * Get the ItemNotaEntradaCompra resource from the default connection.
+     */
+    public function itemNotaEntradaCompra(): ItemNotaEntradaCompra
+    {
+        return $this->connection()->itemNotaEntradaCompra();
+    }
+
+    // =========================================================================
+    // Proxy methods - Sales, Financial and Grouped Resources (Phase 2)
+    // =========================================================================
+
+    /**
+     * Get the MovimentacaoEstoque resource from the default connection.
+     */
+    public function movimentacaoEstoque(): MovimentacaoEstoque
+    {
+        return $this->connection()->movimentacaoEstoque();
+    }
+
+    /**
+     * Get the TipoDocumentoFinanceiro resource from the default connection.
+     */
+    public function tipoDocumentoFinanceiro(): TipoDocumentoFinanceiro
+    {
+        return $this->connection()->tipoDocumentoFinanceiro();
+    }
+
+    /**
+     * Get the SaldoEstoqueVariacao resource from the default connection.
+     */
+    public function saldoEstoqueVariacao(): SaldoEstoqueVariacao
+    {
+        return $this->connection()->saldoEstoqueVariacao();
+    }
+
+    /**
+     * Get the ContaGourmet resource from the default connection.
+     */
+    public function contaGourmet(): ContaGourmet
+    {
+        return $this->connection()->contaGourmet();
+    }
+
+    // =========================================================================
+    // Proxy methods - Commons Resources (Phase 3)
+    // =========================================================================
+
+    /**
+     * Get the Commons factory from the default connection.
+     */
+    public function commons(): CommonsFactory
+    {
+        return $this->connection()->commons();
     }
 }

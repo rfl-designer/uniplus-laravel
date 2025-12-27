@@ -239,6 +239,240 @@ $itens = Uniplus::vendaItens()
     ->get();
 ```
 
+### Movimentação de Estoque
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Todas as movimentações
+$movimentacoes = Uniplus::movimentacaoEstoque()->all();
+
+// Apenas entradas
+$entradas = Uniplus::movimentacaoEstoque()->entries()->get();
+
+// Apenas saídas
+$saidas = Uniplus::movimentacaoEstoque()->exits()->get();
+
+// Por produto
+$movs = Uniplus::movimentacaoEstoque()
+    ->byProduct('PROD001')
+    ->byDateRange('2024-01-01', '2024-12-31')
+    ->get();
+```
+
+### Saldo de Estoque por Variação
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Saldo por produto e filial
+$saldo = Uniplus::saldoEstoqueVariacao()
+    ->byProductAndBranch('PROD001', '1')
+    ->get();
+
+// Produtos com saldo
+$comEstoque = Uniplus::saldoEstoqueVariacao()
+    ->withStock()
+    ->get();
+
+// Produtos abaixo do mínimo
+$baixoEstoque = Uniplus::saldoEstoqueVariacao()
+    ->belowMinimum(10)
+    ->get();
+```
+
+### Ordens de Serviço
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Listar todas
+$ordens = Uniplus::ordemServico()->all();
+
+// Apenas abertas
+$abertas = Uniplus::ordemServico()->open()->get();
+
+// Em execução
+$emExecucao = Uniplus::ordemServico()->inProgress()->get();
+
+// Por cliente
+$ordens = Uniplus::ordemServico()
+    ->byClient('CLI001')
+    ->get();
+```
+
+### Tipos de Documento Financeiro
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Todos os tipos
+$tipos = Uniplus::tipoDocumentoFinanceiro()->all();
+
+// Apenas ativos
+$ativos = Uniplus::tipoDocumentoFinanceiro()->active()->get();
+
+// Tipos PIX
+$pix = Uniplus::tipoDocumentoFinanceiro()->pix()->get();
+
+// Cartão de crédito
+$credito = Uniplus::tipoDocumentoFinanceiro()->creditCard()->get();
+
+// A receber
+$receber = Uniplus::tipoDocumentoFinanceiro()->receivables()->get();
+```
+
+### Códigos EAN
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Por produto
+$eans = Uniplus::eans()->byProduct('PROD001')->get();
+
+// Por código de barras
+$ean = Uniplus::eans()->byBarcode('7891234567890')->first();
+
+// Criar EAN
+Uniplus::eans()->create([
+    'codigoProduto' => 'PROD001',
+    'ean' => '7891234567890',
+]);
+
+// Deletar EAN
+Uniplus::eans()->delete('7891234567890');
+```
+
+### Embalagens
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Por produto
+$embalagens = Uniplus::embalagens()->byProduct('PROD001')->get();
+
+// Por tipo
+$caixas = Uniplus::embalagens()->byType(1)->get();
+
+// Criar embalagem
+Uniplus::embalagens()->create([
+    'codigoProduto' => 'PROD001',
+    'tipoEmbalagem' => 1,
+    'quantidade' => 12,
+]);
+```
+
+### Variações de Produtos
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Por produto
+$variacoes = Uniplus::variacoes()->byProduct('PROD001')->get();
+
+// Por grade
+$cores = Uniplus::variacoes()->byGrid('COR')->get();
+
+// Variações de linha
+$linhas = Uniplus::variacoes()->rows()->get();
+
+// Variações de coluna
+$colunas = Uniplus::variacoes()->columns()->get();
+```
+
+### Registro de Produção
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Por filial
+$registros = Uniplus::registroProducao()
+    ->byBranch('1')
+    ->get();
+
+// Por produto
+$registros = Uniplus::registroProducao()
+    ->byProduct(123)
+    ->get();
+
+// Criar registro
+Uniplus::registroProducao()->createRecord([
+    'descricao' => 'Produção do dia',
+    'itens' => [
+        ['idProduto' => 123, 'quantidade' => 100],
+    ],
+]);
+```
+
+### Conta Gourmet
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Buscar mesa
+$mesa = Uniplus::contaGourmet()->findTable(10, '1');
+
+// Buscar comanda
+$comanda = Uniplus::contaGourmet()->findTab(25, '1');
+
+// Listar mesas
+$mesas = Uniplus::contaGourmet()->tables()->get();
+
+// Listar comandas
+$comandas = Uniplus::contaGourmet()->tabs()->get();
+
+// Construir item para envio
+$item = Uniplus::contaGourmet()->buildItem('PROD001', 'X-Burger', 2, 15.00);
+
+// Construir adicional
+$adicional = Uniplus::contaGourmet()->buildAddon('BACON', 'Bacon Extra', 1, 5.00);
+
+// Construir remoção
+$remocao = Uniplus::contaGourmet()->buildRemoval('CEBOLA', 'Cebola');
+```
+
+### Commons (70+ Tabelas Auxiliares)
+
+O pacote oferece acesso a mais de 70 tabelas auxiliares através do `CommonsFactory`:
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Bancos
+$bancos = Uniplus::commons()->banco()->all();
+
+// Cidades
+$cidades = Uniplus::commons()->cidade()
+    ->where('idestado', 1)
+    ->get();
+
+// Estados
+$estados = Uniplus::commons()->estado()->all();
+
+// Filiais
+$filiais = Uniplus::commons()->filial()->all();
+
+// Tipos de pedido
+$tipos = Uniplus::commons()->tipoPedido()->all();
+
+// Formas de pagamento
+$formas = Uniplus::commons()->formaPagamento()->all();
+
+// Buscar por ID
+$banco = Uniplus::commons()->banco()->find(1);
+
+// Acesso genérico (para tabelas não mapeadas)
+$dados = Uniplus::commons()->table('tipopedido')->all();
+
+// Verificar tabelas disponíveis
+$tabelas = \Uniplus\Resources\Commons\CommonsFactory::getAvailableTables();
+
+// Verificar se tabela existe
+$existe = \Uniplus\Resources\Commons\CommonsFactory::isValidTable('banco');
+```
+
+**Tabelas disponíveis incluem:** banco, cidade, estado, pais, filial, formaPagamento, tipoPedido, grupoItem, subgrupoItem, tipoPessoa, estadoCivil, cfop, ncm, cst, origem, naturezaOperacao, tipoMensalidade, e muitas outras.
+
 ## Operadores de Filtro
 
 O pacote suporta os seguintes operadores:

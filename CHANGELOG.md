@@ -5,6 +5,37 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.0] - 2025-12-27
+
+### Adicionado
+
+- **Novos Recursos da API (14 novos):**
+  - `GrupoShop` - Categorias de e-commerce (somente leitura)
+  - `OrdemServico` - Ordens de serviço (somente leitura)
+  - `Ean` - Códigos de barras EAN (GET, POST, DELETE)
+  - `Embalagem` - Embalagens de produtos (GET, POST, PUT)
+  - `RegistroProducao` - Registros de produção (GET, POST)
+  - `Variacao` - Variações de produtos/grades (GET, POST, PUT)
+  - `ItemNotaEntrada` - Itens de notas de entrada (somente leitura)
+  - `ItemNotaEntradaCompra` - Itens de notas de compra (somente leitura)
+  - `MovimentacaoEstoque` - Movimentações de estoque v2 (somente leitura)
+  - `TipoDocumentoFinanceiro` - Tipos de documentos financeiros (somente leitura)
+  - `SaldoEstoqueVariacao` - Saldo de estoque por variação v2 (somente leitura)
+  - `ContaGourmet` - Contas do módulo Gourmet (GET, POST)
+
+- **Commons Factory** com acesso a 70+ tabelas auxiliares:
+  - Acesso via `Uniplus::commons()->banco()`, `->cidade()`, `->estado()`, etc.
+  - Método genérico `->table('nome')` para tabelas não mapeadas
+  - Validação de tabelas disponíveis
+  - Somente leitura (GET)
+
+- **Classes Base:**
+  - `ReadOnlyResource` - Classe base para recursos somente GET
+  - `CommonsResource` - Classe base para recursos Commons
+  - `CommonsFactory` - Factory com métodos mágicos para 70+ tabelas
+
+- **85 novos testes** para os novos recursos (total: 258 testes)
+
 ## [1.0.0] - 2025-12-27
 
 ### Adicionado
@@ -42,4 +73,5 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - PHP 8.3+
 - Laravel 11.x e 12.x
 
+[1.1.0]: https://github.com/rfl-designer/uniplus-laravel/releases/tag/v1.1.0
 [1.0.0]: https://github.com/rfl-designer/uniplus-laravel/releases/tag/v1.0.0
