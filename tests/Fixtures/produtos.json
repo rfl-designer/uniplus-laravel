@@ -1,0 +1,38 @@
+[
+    {
+        "codigo": "1001",
+        "nome": "Produto Teste 1",
+        "preco": "99.90",
+        "unidadeMedida": "UN",
+        "inativo": 0,
+        "ncm": "84713012",
+        "codigoGrupoProduto": "1",
+        "nomeGrupoProduto": "Eletrônicos",
+        "codigoMarca": "1",
+        "nomeMarca": "Marca Teste"
+    },
+    {
+        "codigo": "1002",
+        "nome": "Produto Teste 2",
+        "preco": "150.00",
+        "unidadeMedida": "UN",
+        "inativo": 0,
+        "ncm": "84713012",
+        "codigoGrupoProduto": "1",
+        "nomeGrupoProduto": "Eletrônicos",
+        "codigoMarca": "2",
+        "nomeMarca": "Outra Marca"
+    },
+    {
+        "codigo": "1003",
+        "nome": "Produto Inativo",
+        "preco": "50.00",
+        "unidadeMedida": "UN",
+        "inativo": 1,
+        "ncm": "84713012",
+        "codigoGrupoProduto": "2",
+        "nomeGrupoProduto": "Acessórios",
+        "codigoMarca": "1",
+        "nomeMarca": "Marca Teste"
+    }
+]

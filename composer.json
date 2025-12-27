@@ -1,0 +1,71 @@
+{
+    "name": "rfl-designer/uniplus-laravel",
+    "description": "Laravel integration package for Uniplus ERP API",
+    "keywords": [
+        "laravel",
+        "uniplus",
+        "erp",
+        "api",
+        "integration"
+    ],
+    "license": "MIT",
+    "type": "library",
+    "homepage": "https://github.com/rfl-designer/uniplus-laravel",
+    "authors": [
+        {
+            "name": "Rafael Oliveira",
+            "email": "rfl.designer@gmail.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/rfl-designer/uniplus-laravel/issues",
+        "source": "https://github.com/rfl-designer/uniplus-laravel"
+    },
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.0|^12.0",
+        "illuminate/http": "^11.0|^12.0",
+        "illuminate/cache": "^11.0|^12.0",
+        "illuminate/events": "^11.0|^12.0",
+        "illuminate/log": "^11.0|^12.0"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "orchestra/testbench": "^9.0|^10.0",
+        "pestphp/pest": "^3.0|^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0"
+    },
+    "scripts": {
+        "analyse": "phpstan analyse --memory-limit=2G",
+        "test": "pest",
+        "test:coverage": "pest --coverage"
+    },
+    "autoload": {
+        "psr-4": {
+            "Uniplus\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Uniplus\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Uniplus\\UniplusServiceProvider"
+            ],
+            "aliases": {
+                "Uniplus": "Uniplus\\Facades\\Uniplus"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

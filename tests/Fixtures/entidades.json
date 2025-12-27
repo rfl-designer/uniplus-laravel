@@ -1,0 +1,29 @@
+[
+    {
+        "codigo": "1",
+        "nome": "Cliente Teste",
+        "tipo": 1,
+        "cnpjCpf": "123.456.789-00",
+        "email": "cliente@teste.com",
+        "telefone": "(11) 99999-9999",
+        "inativo": 0
+    },
+    {
+        "codigo": "2",
+        "nome": "Fornecedor Teste",
+        "tipo": 2,
+        "cnpjCpf": "12.345.678/0001-90",
+        "email": "fornecedor@teste.com",
+        "telefone": "(11) 88888-8888",
+        "inativo": 0
+    },
+    {
+        "codigo": "3",
+        "nome": "Transportadora Teste",
+        "tipo": 3,
+        "cnpjCpf": "98.765.432/0001-10",
+        "email": "transportadora@teste.com",
+        "telefone": "(11) 77777-7777",
+        "inativo": 0
+    }
+]
