@@ -63,10 +63,11 @@ class Token
 
     /**
      * Get the Authorization header value.
+     * Note: Always uses "Bearer" (capitalized) as the Uniplus API is case-sensitive.
      */
     public function getAuthorizationHeader(): string
     {
-        return "{$this->tokenType} {$this->accessToken}";
+        return "Bearer {$this->accessToken}";
     }
 
     /**

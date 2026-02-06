@@ -104,6 +104,20 @@ describe('Token', function () {
             ->toBe('Bearer my-secret-token');
     });
 
+    it('always uses capitalized Bearer in authorization header even when API returns lowercase', function () {
+        // The Uniplus API returns "bearer" (lowercase) but the server is case-sensitive
+        // and requires "Bearer" (capitalized) in the Authorization header
+        $data = [
+            'access_token' => 'my-secret-token',
+            'token_type' => 'bearer', // lowercase from API
+        ];
+
+        $token = Token::fromResponse($data);
+
+        expect($token->getAuthorizationHeader())
+            ->toBe('Bearer my-secret-token'); // Must be capitalized
+    });
+
     it('can be serialized to array', function () {
         $data = [
             'access_token' => 'test-token',
