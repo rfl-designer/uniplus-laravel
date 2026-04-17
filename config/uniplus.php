@@ -19,10 +19,12 @@ return [
     | Configurações das conexões com a API Uniplus. Suporte a múltiplas
     | conexões para cenários multi-tenant.
     |
-    | - account: Nome da conta no Uniplus (usado para resolver URL via routing service)
+    | - account: Nome da conta no Uniplus
     | - authorization_code: Código de autorização Base64 (usuário:token)
     | - user_id: ID do usuário para requisições
     | - branch_id: ID da filial padrão
+    | - server_url: URL base do servidor Uniplus desta conta (obrigatório).
+    |   O SDK não resolve o endereço; quem consome o pacote deve informá-lo.
     |
     */
     'connections' => [
@@ -31,6 +33,7 @@ return [
             'authorization_code' => env('UNIPLUS_AUTH_CODE'),
             'user_id' => env('UNIPLUS_USER_ID', 1),
             'branch_id' => env('UNIPLUS_BRANCH_ID', 1),
+            'server_url' => env('UNIPLUS_SERVER_URL'),
         ],
     ],
 
@@ -80,17 +83,6 @@ return [
         'enabled' => env('UNIPLUS_LOGGING', true),
         'channel' => env('UNIPLUS_LOG_CHANNEL'),
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Routing Service
-    |--------------------------------------------------------------------------
-    |
-    | URL do serviço de roteamento para resolver o endereço do servidor
-    | baseado no nome da conta.
-    |
-    */
-    'routing_service' => 'https://server-portal.intelidata.inf.br/roteador/endereco-servidor',
 
     /*
     |--------------------------------------------------------------------------

@@ -14,8 +14,6 @@ use Uniplus\Http\Client;
 use Uniplus\Http\Response;
 
 beforeEach(function () {
-    // Set up routing service URL in config
-    config(['uniplus.routing_service' => 'https://test-router.example.com']);
     config(['uniplus.cache.enabled' => false]);
     config(['uniplus.logging.enabled' => false]);
 
@@ -24,6 +22,7 @@ beforeEach(function () {
         'authorization_code' => base64_encode('client:secret'),
         'user_id' => 1,
         'branch_id' => 1,
+        'server_url' => 'https://api.test.uniplus.com',
     ]);
 });
 
@@ -34,7 +33,6 @@ afterEach(function () {
 describe('Client HTTP Methods', function () {
     it('makes GET requests', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -63,7 +61,6 @@ describe('Client HTTP Methods', function () {
 
     it('makes POST requests', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -94,7 +91,6 @@ describe('Client HTTP Methods', function () {
 
     it('makes PUT requests', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -123,7 +119,6 @@ describe('Client HTTP Methods', function () {
 
     it('makes DELETE requests', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -146,7 +141,6 @@ describe('Client HTTP Methods', function () {
 
     it('includes required headers', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -173,7 +167,6 @@ describe('Client HTTP Methods', function () {
 describe('Client Events', function () {
     it('dispatches RequestSending event before request', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -197,7 +190,6 @@ describe('Client Events', function () {
 
     it('dispatches RequestSent event after successful request', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -222,7 +214,6 @@ describe('Client Events', function () {
 
     it('dispatches RequestFailed event on connection error', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -251,7 +242,6 @@ describe('Client Events', function () {
 describe('Client Error Handling', function () {
     it('throws ConnectionException on network error', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
