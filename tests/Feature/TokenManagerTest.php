@@ -15,8 +15,6 @@ use Uniplus\Exceptions\AuthenticationException;
 beforeEach(function () {
     Carbon::setTestNow(Carbon::create(2024, 1, 1, 12, 0, 0));
 
-    // Set up routing service URL in config
-    config(['uniplus.routing_service' => 'https://test-router.example.com']);
     config(['uniplus.cache.enabled' => false]);
     config(['uniplus.logging.enabled' => false]);
 
@@ -25,6 +23,7 @@ beforeEach(function () {
         'authorization_code' => base64_encode('client:secret'),
         'user_id' => 1,
         'branch_id' => 1,
+        'server_url' => 'https://api.test-server.com',
     ]);
 });
 
@@ -36,7 +35,6 @@ afterEach(function () {
 describe('TokenManager', function () {
     it('fetches a new token from the API', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test-server.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'new-access-token',
                 'token_type' => 'Bearer',
@@ -63,7 +61,6 @@ describe('TokenManager', function () {
 
     it('throws exception when token fetch fails', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test-server.com'),
             '*/oauth/token' => Http::response('Invalid credentials', 401),
         ]);
 
@@ -75,7 +72,6 @@ describe('TokenManager', function () {
 
     it('throws exception when access_token is missing from response', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test-server.com'),
             '*/oauth/token' => Http::response([
                 'token_type' => 'Bearer',
                 // access_token is missing
@@ -92,7 +88,6 @@ describe('TokenManager', function () {
         config(['uniplus.cache.enabled' => true]);
 
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test-server.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'cached-token',
                 'token_type' => 'Bearer',
@@ -153,7 +148,6 @@ describe('TokenManager', function () {
         ], 3600);
 
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test-server.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'new-token',
                 'token_type' => 'Bearer',
@@ -184,7 +178,6 @@ describe('TokenManager', function () {
         ], 3600);
 
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test-server.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'refreshed-token',
                 'token_type' => 'Bearer',

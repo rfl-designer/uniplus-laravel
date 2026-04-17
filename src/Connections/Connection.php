@@ -42,6 +42,12 @@ abstract class Connection implements ConnectionInterface
         /** @var int|string $branchId */
         $branchId = $config['branch_id'] ?? 1;
         $this->branchId = (int) $branchId;
+
+        if (isset($config['server_url']) && $config['server_url'] !== '') {
+            /** @var string $serverUrl */
+            $serverUrl = $config['server_url'];
+            $this->baseUrl = rtrim($serverUrl, '/');
+        }
     }
 
     public function getAccount(): string

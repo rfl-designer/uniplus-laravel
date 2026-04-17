@@ -25,19 +25,18 @@ use Uniplus\UniplusManager;
 beforeEach(function () {
     config([
         'uniplus.default' => 'test',
-        'uniplus.routing_service' => 'https://test-router.example.com',
         'uniplus.connections.test' => [
             'account' => 'test-account',
             'authorization_code' => base64_encode('client:secret'),
             'user_id' => 1,
             'branch_id' => 1,
+            'server_url' => 'https://api.test.uniplus.com',
         ],
         'uniplus.cache.enabled' => false,
         'uniplus.logging.enabled' => false,
     ]);
 
     Http::fake([
-        '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
         '*/oauth/token' => Http::response([
             'access_token' => 'test-token',
             'token_type' => 'Bearer',
@@ -147,7 +146,6 @@ describe('Ean Resource', function () {
 
     it('can create an EAN', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -492,7 +490,6 @@ describe('ContaGourmet Resource', function () {
 
     it('can find a table account', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -590,7 +587,6 @@ describe('CommonsFactory', function () {
 describe('CommonsResource', function () {
     it('can fetch all records', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -611,7 +607,6 @@ describe('CommonsResource', function () {
 
     it('can find a record by ID', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -837,7 +832,6 @@ describe('GrupoShop Resource - Extended', function () {
 
     it('can fetch all categories', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -962,7 +956,6 @@ describe('Ean Resource - Extended', function () {
 
     it('can add an EAN using helper method', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -985,7 +978,6 @@ describe('Ean Resource - Extended', function () {
 
     it('can remove an EAN', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -1050,7 +1042,6 @@ describe('Embalagem Resource - Extended', function () {
 
     it('can add packaging using helper method', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -1073,7 +1064,6 @@ describe('Embalagem Resource - Extended', function () {
 
     it('can update packaging using helper method', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -1132,7 +1122,6 @@ describe('RegistroProducao Resource - Extended', function () {
 
     it('can create a production record using helper method', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -1195,7 +1184,6 @@ describe('Variacao Resource - Extended', function () {
 
     it('can add variation using helper method', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -1219,7 +1207,6 @@ describe('Variacao Resource - Extended', function () {
 
     it('can update variation using helper method', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -1661,7 +1648,6 @@ describe('ContaGourmet Resource - Extended', function () {
 
     it('can find a tab account', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -1683,7 +1669,6 @@ describe('ContaGourmet Resource - Extended', function () {
 
     it('can create a table account', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -1708,7 +1693,6 @@ describe('ContaGourmet Resource - Extended', function () {
 
     it('can create a tab account', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -1733,7 +1717,6 @@ describe('ContaGourmet Resource - Extended', function () {
 
     it('can add items to an existing account', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -1780,7 +1763,6 @@ describe('ContaGourmet Resource - Extended', function () {
 
     it('can use createOrUpdate as alias for create', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',

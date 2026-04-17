@@ -12,19 +12,18 @@ use Uniplus\UniplusManager;
 beforeEach(function () {
     config([
         'uniplus.default' => 'test',
-        'uniplus.routing_service' => 'https://test-router.example.com',
         'uniplus.connections.test' => [
             'account' => 'test-account',
             'authorization_code' => base64_encode('client:secret'),
             'user_id' => 1,
             'branch_id' => 1,
+            'server_url' => 'https://api.test.uniplus.com',
         ],
         'uniplus.cache.enabled' => false,
         'uniplus.logging.enabled' => false,
     ]);
 
     Http::fake([
-        '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
         '*/oauth/token' => Http::response([
             'access_token' => 'test-token',
             'token_type' => 'Bearer',
@@ -40,7 +39,6 @@ afterEach(function () {
 describe('Produto Resource', function () {
     it('can fetch all products', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -61,7 +59,6 @@ describe('Produto Resource', function () {
 
     it('can find a product by code', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -83,7 +80,6 @@ describe('Produto Resource', function () {
 
     it('can create a product', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -106,7 +102,6 @@ describe('Produto Resource', function () {
 
     it('can update a product', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -129,7 +124,6 @@ describe('Produto Resource', function () {
 
     it('can delete a product', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -182,7 +176,6 @@ describe('Produto Resource', function () {
 
     it('can update prices for multiple products', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -206,7 +199,6 @@ describe('Produto Resource', function () {
 
     it('can update prices with branch-specific pricing', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -245,7 +237,6 @@ describe('Produto Resource', function () {
 
     it('can create multiple products at once', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -436,7 +427,6 @@ describe('SaldoEstoque Resource', function () {
 
     it('can get balance for specific product', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -456,7 +446,6 @@ describe('SaldoEstoque Resource', function () {
 
     it('can update stock balance', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -483,7 +472,6 @@ describe('SaldoEstoque Resource', function () {
 describe('Venda Resource (Read-only)', function () {
     it('can fetch sales', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
@@ -505,7 +493,6 @@ describe('Venda Resource (Read-only)', function () {
 describe('VendaItem Resource (Read-only)', function () {
     it('can fetch sale items', function () {
         Http::fake([
-            '*test-router.example.com/*' => Http::response('https://api.test.uniplus.com'),
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
