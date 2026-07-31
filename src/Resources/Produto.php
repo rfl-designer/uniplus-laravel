@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
+use Uniplus\Query\Builder;
+
 class Produto extends Resource
 {
     protected string $endpoint = 'public-api/v1/produtos';
@@ -15,7 +17,7 @@ class Produto extends Resource
      *
      * @param  int  $timestamp  Unix timestamp in milliseconds
      */
-    public function changedAfter(int $timestamp): \Uniplus\Query\Builder
+    public function changedAfter(int $timestamp): Builder
     {
         return $this->where('currentTimeMillis', '>=', $timestamp);
     }
@@ -23,7 +25,7 @@ class Produto extends Resource
     /**
      * Find active products only.
      */
-    public function active(): \Uniplus\Query\Builder
+    public function active(): Builder
     {
         return $this->where('inativo', 0);
     }
@@ -31,7 +33,7 @@ class Produto extends Resource
     /**
      * Find inactive products only.
      */
-    public function inactive(): \Uniplus\Query\Builder
+    public function inactive(): Builder
     {
         return $this->where('inativo', 1);
     }
@@ -39,7 +41,7 @@ class Produto extends Resource
     /**
      * Find products by group.
      */
-    public function byGroup(string $groupCode): \Uniplus\Query\Builder
+    public function byGroup(string $groupCode): Builder
     {
         return $this->where('codigoGrupoProduto', $groupCode);
     }
@@ -47,7 +49,7 @@ class Produto extends Resource
     /**
      * Find products by brand.
      */
-    public function byBrand(string $brandCode): \Uniplus\Query\Builder
+    public function byBrand(string $brandCode): Builder
     {
         return $this->where('codigoMarca', $brandCode);
     }

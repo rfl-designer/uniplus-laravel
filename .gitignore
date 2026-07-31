@@ -2,7 +2,6 @@
 /node_modules/
 .phpunit.result.cache
 .phpunit.cache/
-phpunit.xml
 .idea/
 .vscode/
 *.swp

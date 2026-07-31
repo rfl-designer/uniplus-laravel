@@ -220,7 +220,7 @@ describe('Client Events', function () {
                 'expires_in' => 3600,
             ]),
             '*/public-api/*' => function () {
-                throw new \Illuminate\Http\Client\ConnectionException('Connection failed');
+                throw new Illuminate\Http\Client\ConnectionException('Connection failed');
             },
         ]);
 
@@ -248,7 +248,7 @@ describe('Client Error Handling', function () {
                 'expires_in' => 3600,
             ]),
             '*/public-api/*' => function () {
-                throw new \Illuminate\Http\Client\ConnectionException('Connection failed');
+                throw new Illuminate\Http\Client\ConnectionException('Connection failed');
             },
         ]);
 

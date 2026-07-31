@@ -233,7 +233,7 @@ describe('Produto Resource', function () {
     it('throws exception when updatePrecos receives empty array', function () {
         $manager = app(UniplusManager::class);
         $manager->produtos()->updatePrecos([]);
-    })->throws(\InvalidArgumentException::class, 'Products array cannot be empty.');
+    })->throws(InvalidArgumentException::class, 'Products array cannot be empty.');
 
     it('can create multiple products at once', function () {
         Http::fake([
@@ -266,7 +266,7 @@ describe('Produto Resource', function () {
     it('throws exception when createMany receives empty array', function () {
         $manager = app(UniplusManager::class);
         $manager->produtos()->createMany([]);
-    })->throws(\InvalidArgumentException::class, 'Products array cannot be empty.');
+    })->throws(InvalidArgumentException::class, 'Products array cannot be empty.');
 });
 
 describe('Entidade Resource', function () {

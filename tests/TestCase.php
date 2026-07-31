@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Uniplus\Tests;
 
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Uniplus\Facades\Uniplus;
 use Uniplus\UniplusServiceProvider;
 
 abstract class TestCase extends BaseTestCase
@@ -19,7 +20,7 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageAliases($app): array
     {
         return [
-            'Uniplus' => \Uniplus\Facades\Uniplus::class,
+            'Uniplus' => Uniplus::class,
         ];
     }
 

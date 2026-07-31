@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
+use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 
 /**
@@ -108,10 +109,10 @@ class Embalagem extends Resource
     /**
      * Delete is not supported for Embalagens.
      *
-     * @throws \Uniplus\Exceptions\UniplusException
+     * @throws UniplusException
      */
     public function delete(string $code): bool
     {
-        throw new \Uniplus\Exceptions\UniplusException('Delete operation is not supported for Embalagens.');
+        throw new UniplusException('Delete operation is not supported for Embalagens.');
     }
 }

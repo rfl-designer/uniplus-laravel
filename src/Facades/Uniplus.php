@@ -12,6 +12,7 @@ use Uniplus\Resources\SaldoEstoque;
 use Uniplus\Resources\Venda;
 use Uniplus\Resources\VendaItem;
 use Uniplus\Uniplus as UniplusClient;
+use Uniplus\UniplusManager;
 
 /**
  * @method static UniplusClient connection(?string $name = null)
@@ -26,7 +27,7 @@ use Uniplus\Uniplus as UniplusClient;
  * @method static void assertNotSent(string $url)
  * @method static void assertSentCount(int $count)
  *
- * @see \Uniplus\UniplusManager
+ * @see UniplusManager
  */
 class Uniplus extends Facade
 {
