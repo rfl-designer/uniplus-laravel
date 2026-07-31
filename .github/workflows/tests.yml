@@ -48,7 +48,7 @@ jobs:
         run: vendor/bin/phpstan analyse --memory-limit=2G
 
       - name: Run tests
-        run: vendor/bin/pest
+        run: vendor/bin/pest --cache-directory=.phpunit.cache
 
   code-style:
     runs-on: ubuntu-latest
