@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
+use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 
 class Venda extends Resource
@@ -102,21 +103,21 @@ class Venda extends Resource
      */
     public function create(array $data): array
     {
-        throw new \Uniplus\Exceptions\UniplusException(
+        throw new UniplusException(
             'Venda resource is read-only. Use DAV to create sales.',
         );
     }
 
     public function update(array $data): array
     {
-        throw new \Uniplus\Exceptions\UniplusException(
+        throw new UniplusException(
             'Venda resource is read-only.',
         );
     }
 
     public function delete(string $code): bool
     {
-        throw new \Uniplus\Exceptions\UniplusException(
+        throw new UniplusException(
             'Venda resource is read-only.',
         );
     }

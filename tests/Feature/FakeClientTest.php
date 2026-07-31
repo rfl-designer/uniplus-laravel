@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use PHPUnit\Framework\AssertionFailedError;
 use Uniplus\Testing\FakeClient;
 
 describe('FakeClient', function () {
@@ -72,7 +73,7 @@ describe('FakeClient', function () {
         $fakeClient = new FakeClient;
 
         expect(fn () => $fakeClient->assertSent('GET', '/produtos'))
-            ->toThrow(\PHPUnit\Framework\AssertionFailedError::class);
+            ->toThrow(AssertionFailedError::class);
     });
 
     it('asserts request was not sent', function () {
@@ -90,7 +91,7 @@ describe('FakeClient', function () {
         $fakeClient->record('GET', '/produtos', []);
 
         expect(fn () => $fakeClient->assertNotSent('/produtos'))
-            ->toThrow(\PHPUnit\Framework\AssertionFailedError::class);
+            ->toThrow(AssertionFailedError::class);
     });
 
     it('asserts correct request count', function () {
@@ -110,7 +111,7 @@ describe('FakeClient', function () {
         $fakeClient->record('GET', '/produtos', []);
 
         expect(fn () => $fakeClient->assertSentCount(5))
-            ->toThrow(\PHPUnit\Framework\AssertionFailedError::class);
+            ->toThrow(AssertionFailedError::class);
     });
 
     it('asserts nothing was sent', function () {
@@ -126,7 +127,7 @@ describe('FakeClient', function () {
         $fakeClient->record('GET', '/produtos', []);
 
         expect(fn () => $fakeClient->assertNothingSent())
-            ->toThrow(\PHPUnit\Framework\AssertionFailedError::class);
+            ->toThrow(AssertionFailedError::class);
     });
 
     it('returns recorded requests as collection', function () {

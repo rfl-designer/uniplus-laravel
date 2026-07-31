@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
+use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 
 /**
@@ -67,10 +68,10 @@ class Ean extends Resource
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      *
-     * @throws \Uniplus\Exceptions\UniplusException
+     * @throws UniplusException
      */
     public function update(array $data): array
     {
-        throw new \Uniplus\Exceptions\UniplusException('Update operation is not supported for EANs. Delete and create a new one instead.');
+        throw new UniplusException('Update operation is not supported for EANs. Delete and create a new one instead.');
     }
 }

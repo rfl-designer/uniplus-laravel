@@ -11,6 +11,7 @@ use Uniplus\Resources\SaldoEstoque;
 use Uniplus\Resources\Venda;
 use Uniplus\Resources\VendaItem;
 use Uniplus\Uniplus as UniplusClient;
+use Uniplus\UniplusManager;
 
 beforeEach(function () {
     config([
@@ -41,7 +42,7 @@ afterEach(function () {
 
 describe('Uniplus Facade', function () {
     it('resolves the correct facade accessor', function () {
-        expect(Uniplus::getFacadeRoot())->toBeInstanceOf(\Uniplus\UniplusManager::class);
+        expect(Uniplus::getFacadeRoot())->toBeInstanceOf(UniplusManager::class);
     });
 
     it('provides connection method', function () {
