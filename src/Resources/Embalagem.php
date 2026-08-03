@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
+use Illuminate\Support\Collection;
 use Uniplus\Query\Builder;
 
 /**
@@ -105,5 +106,27 @@ class Embalagem extends Resource
     public function updatePackaging(array $data): array
     {
         return $this->update($data);
+    }
+
+    /**
+     * List packaging for a product via the dedicated route.
+     *
+     * @param  array<int, int>|null  $types
+     * @return Collection<int, array<string, mixed>>
+     */
+    public function porProduto(string $productCode, ?array $types = null): Collection
+    {
+        $query = ['codigoProduto' => $productCode];
+
+        if ($types !== null) {
+            $query['tipos'] = $types;
+        }
+
+        $response = $this->client->get("{$this->endpoint}/por-produto", $query);
+
+        /** @var array<int, array<string, mixed>> $data */
+        $data = $response->json() ?? [];
+
+        return collect($data);
     }
 }

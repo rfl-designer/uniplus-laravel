@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
+use Illuminate\Support\Collection;
 use Uniplus\Query\Builder;
 
 class Entidade extends Resource
@@ -107,5 +108,41 @@ class Entidade extends Resource
     public function byCpfCnpj(string $cpfCnpj): Builder
     {
         return $this->where('cnpjCpf', $cpfCnpj);
+    }
+
+    /**
+     * Search entities via the dedicated search route.
+     *
+     * @return Collection<int, array<string, mixed>>
+     */
+    public function search(string $searchParam, ?int $entityType = null): Collection
+    {
+        $query = ['searchParam' => $searchParam];
+
+        if ($entityType !== null) {
+            $query['tipoEntidade'] = $entityType;
+        }
+
+        $response = $this->client->get("{$this->endpoint}/search", $query);
+
+        /** @var array<int, array<string, mixed>> $data */
+        $data = $response->json() ?? [];
+
+        return collect($data);
+    }
+
+    /**
+     * Sync entities changed since a pointer via the dedicated route.
+     *
+     * @return Collection<int, array<string, mixed>>
+     */
+    public function porAlteracao(string $pointer): Collection
+    {
+        $response = $this->client->get("{$this->endpoint}/por-alteracao", ['ponteiro' => $pointer]);
+
+        /** @var array<int, array<string, mixed>> $data */
+        $data = $response->json() ?? [];
+
+        return collect($data);
     }
 }

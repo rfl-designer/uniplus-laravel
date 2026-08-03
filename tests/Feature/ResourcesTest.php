@@ -314,6 +314,53 @@ describe('Produto Resource', function () {
     })->throws(InvalidArgumentException::class, 'Products array cannot be empty.');
 });
 
+describe('Produto Resource - Rota dedicada de busca (S6)', function () {
+    it('searches products by term via the dedicated search route', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/produtos/search*' => Http::response([
+                ['codigo' => '001', 'descricao' => 'Mouse Sem Fio'],
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $produtos = $manager->produtos()->search('mouse');
+
+        expect($produtos)->toBeInstanceOf(Collection::class)
+            ->and($produtos)->toHaveCount(1);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'GET'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/produtos/search?searchParam=mouse';
+        });
+    });
+
+    it('only includes produtosInativos and idFilial in the query when informed', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/produtos/search*' => Http::response([
+                ['codigo' => '001', 'descricao' => 'Mouse Sem Fio'],
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $manager->produtos()->search('mouse', true, 3);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'GET'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/produtos/search?searchParam=mouse&produtosInativos=true&idFilial=3';
+        });
+    });
+});
+
 describe('Entidade Resource', function () {
     it('has correct entity type constants', function () {
         expect(Entidade::TIPO_CLIENTE)->toBe(1)
@@ -450,6 +497,79 @@ describe('Entidade Resource', function () {
             return $request->method() === 'DELETE'
                 && $request->url() === 'https://api.test.uniplus.com/public-api/v1/entidades/001'
                 && $request->data() === [];
+        });
+    });
+});
+
+describe('Entidade Resource - Rotas dedicadas de busca e sincronização (S6)', function () {
+    it('searches entities by term via the dedicated search route', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/entidades/search*' => Http::response([
+                ['codigo' => '001', 'nome' => 'Joao Silva'],
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $entidades = $manager->entidades()->search('joao');
+
+        expect($entidades)->toBeInstanceOf(Collection::class)
+            ->and($entidades)->toHaveCount(1);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'GET'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/entidades/search?searchParam=joao';
+        });
+    });
+
+    it('includes tipoEntidade in the query when informed', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/entidades/search*' => Http::response([
+                ['codigo' => '001', 'nome' => 'Joao Silva'],
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $manager->entidades()->search('joao', Entidade::TIPO_CLIENTE);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'GET'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/entidades/search?searchParam=joao&tipoEntidade=1';
+        });
+    });
+
+    it('syncs entities changed since a pointer via the dedicated route, returning the decoded list', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/entidades/por-alteracao*' => Http::response([
+                ['codigo' => '001', 'nome' => 'Joao Silva'],
+                ['codigo' => '002', 'nome' => 'Maria Souza'],
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $entidades = $manager->entidades()->porAlteracao('abc123');
+
+        expect($entidades)->toBeInstanceOf(Collection::class)
+            ->and($entidades)->toHaveCount(2)
+            ->and($entidades->first())->toBe(['codigo' => '001', 'nome' => 'Joao Silva']);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'GET'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/entidades/por-alteracao?ponteiro=abc123';
         });
     });
 });

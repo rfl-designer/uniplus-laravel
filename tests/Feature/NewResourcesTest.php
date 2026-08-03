@@ -1173,6 +1173,53 @@ describe('Embalagem Resource - Extended', function () {
     });
 });
 
+describe('Embalagem Resource - Rota dedicada por-produto (S6)', function () {
+    it('lists packaging for a product via the dedicated route', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/embalagens/por-produto*' => Http::response([
+                ['id' => 1, 'produto' => 'PROD001', 'unidadeMedida' => 'CX'],
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $embalagens = $manager->embalagens()->porProduto('PROD001');
+
+        expect($embalagens)->toBeInstanceOf(Collection::class)
+            ->and($embalagens)->toHaveCount(1);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'GET'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/embalagens/por-produto?codigoProduto=PROD001';
+        });
+    });
+
+    it('includes tipos in the query when informed', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/embalagens/por-produto*' => Http::response([
+                ['id' => 1, 'produto' => 'PROD001', 'unidadeMedida' => 'CX'],
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $manager->embalagens()->porProduto('PROD001', [Embalagem::TIPO_COMPRA_VENDA, Embalagem::TIPO_SOMENTE_VENDA]);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'GET'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/embalagens/por-produto?codigoProduto=PROD001&tipos%5B0%5D=0&tipos%5B1%5D=2';
+        });
+    });
+});
+
 describe('RegistroProducao Resource - Extended', function () {
     it('can filter by branch code', function () {
         $manager = app(UniplusManager::class);
