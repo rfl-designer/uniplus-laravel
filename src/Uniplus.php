@@ -10,9 +10,12 @@ use Uniplus\Http\Client;
 use Uniplus\Resources\Commons\CommonsFactory;
 use Uniplus\Resources\ContaGourmet;
 use Uniplus\Resources\Dav;
+use Uniplus\Resources\DocumentoFinanceiro;
 use Uniplus\Resources\Ean;
 use Uniplus\Resources\Embalagem;
 use Uniplus\Resources\Entidade;
+use Uniplus\Resources\EntidadeOcorrencia;
+use Uniplus\Resources\FichaTecnica;
 use Uniplus\Resources\GrupoShop;
 use Uniplus\Resources\ItemNotaEntrada;
 use Uniplus\Resources\ItemNotaEntradaCompra;
@@ -222,6 +225,34 @@ class Uniplus
         }
 
         return $this->commonsFactory;
+    }
+
+    // =========================================================================
+    // Read-Only Resources (Phase 4)
+    // =========================================================================
+
+    /**
+     * Get the DocumentoFinanceiro resource (financial documents).
+     */
+    public function documentoFinanceiro(): DocumentoFinanceiro
+    {
+        return $this->getResource(DocumentoFinanceiro::class);
+    }
+
+    /**
+     * Get the FichaTecnica resource (product technical sheets).
+     */
+    public function fichaTecnica(): FichaTecnica
+    {
+        return $this->getResource(FichaTecnica::class);
+    }
+
+    /**
+     * Get the EntidadeOcorrencia resource (entity occurrences).
+     */
+    public function entidadeOcorrencias(): EntidadeOcorrencia
+    {
+        return $this->getResource(EntidadeOcorrencia::class);
     }
 
     // =========================================================================

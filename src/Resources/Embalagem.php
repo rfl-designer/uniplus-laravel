@@ -12,7 +12,7 @@ use Uniplus\Query\Builder;
  * Product packaging resource.
  *
  * Endpoint: /public-api/v1/embalagens
- * Methods: GET, POST, PUT
+ * Methods: GET, POST, PUT, DELETE
  */
 class Embalagem extends Resource
 {
