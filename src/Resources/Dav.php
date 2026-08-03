@@ -12,6 +12,8 @@ class Dav extends Resource
 
     protected string $primaryKey = 'codigo';
 
+    protected ?string $wrapper = 'dav';
+
     /**
      * Document types.
      */

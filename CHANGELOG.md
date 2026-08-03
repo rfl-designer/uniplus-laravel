@@ -5,6 +5,17 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [Unreleased]
+
+### Corrigido
+
+- **Wire format da camada de escrita**, para bater com o contrato real da API Pública Uniplus (as chamadas antigas não funcionavam contra o contrato — bug fix, não breaking change funcional):
+  - `delete($codigo)` em recursos graváveis agora envia `DELETE {endpoint}/{codigo}` (código como path param), em vez de `DELETE {endpoint}` com o código no body.
+  - `create()`/`update()` de `Produto`, `Entidade`, `Dav` e `SaldoEstoque` agora embrulham o payload em `{"produto": {...}}`, `{"entidade": {...}}`, `{"dav": {...}}` e `{"saldoEstoque": {...}}` respectivamente.
+  - Helpers legados (`addEan`, `addPackaging`, `addVariation`, `createRecord`, `updatePackaging`, `updateVariation`) passam a delegar para `create()`/`update()` sem embrulhar manualmente o payload, evitando wrapper duplicado.
+  - Operações em lote (`Produto::createMany()`, `Produto::updatePrecos()`) continuam enviando array cru, sem wrapper.
+  - `ContaGourmet::delete()` agora lança `UniplusException` explicando que o contrato Gourmet não suporta a operação, em vez de retornar `false` silenciosamente.
+
 ## [1.3.0] - 2025-12-27
 
 ### Corrigido

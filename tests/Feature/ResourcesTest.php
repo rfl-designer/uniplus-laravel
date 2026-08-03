@@ -78,7 +78,7 @@ describe('Produto Resource', function () {
             ->and($produto['descricao'])->toBe('Product 1');
     });
 
-    it('can create a product', function () {
+    it('can create a product, wrapped in a single "produto" level', function () {
         Http::fake([
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
@@ -98,9 +98,20 @@ describe('Produto Resource', function () {
         ]);
 
         expect($produto['codigo'])->toBe('003');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/produtos'
+                && $request->data() === [
+                    'produto' => [
+                        'descricao' => 'New Product',
+                        'preco' => 49.99,
+                    ],
+                ];
+        });
     });
 
-    it('can update a product', function () {
+    it('can update a product, wrapped in a single "produto" level', function () {
         Http::fake([
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
@@ -120,22 +131,39 @@ describe('Produto Resource', function () {
         ]);
 
         expect($produto['descricao'])->toBe('Updated Product');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'PUT'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/produtos'
+                && $request->data() === [
+                    'produto' => [
+                        'codigo' => '001',
+                        'descricao' => 'Updated Product',
+                    ],
+                ];
+        });
     });
 
-    it('can delete a product', function () {
+    it('can delete a product via DELETE with the code as a path parameter', function () {
         Http::fake([
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
                 'expires_in' => 3600,
             ]),
-            '*/public-api/v1/produtos' => Http::response(null, 204),
+            '*/public-api/v1/produtos/001' => Http::response(null, 204),
         ]);
 
         $manager = app(UniplusManager::class);
         $result = $manager->produtos()->delete('001');
 
         expect($result)->toBeTrue();
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'DELETE'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/produtos/001'
+                && $request->data() === [];
+        });
     });
 
     it('can filter active products', function () {
@@ -174,7 +202,7 @@ describe('Produto Resource', function () {
         expect($builder->toQueryString())->toContain('currentTimeMillis.ge=1704067200000');
     });
 
-    it('can update prices for multiple products', function () {
+    it('can update prices for multiple products, sent as a raw array without a wrapper', function () {
         Http::fake([
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
@@ -195,6 +223,14 @@ describe('Produto Resource', function () {
 
         expect($result['success'])->toBeTrue()
             ->and($result['updated'])->toBe(2);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->data() === [
+                    ['codigo' => '001', 'preco' => 99.90],
+                    ['codigo' => '002', 'preco' => 149.90],
+                ];
+        });
     });
 
     it('can update prices with branch-specific pricing', function () {
@@ -235,7 +271,7 @@ describe('Produto Resource', function () {
         $manager->produtos()->updatePrecos([]);
     })->throws(InvalidArgumentException::class, 'Products array cannot be empty.');
 
-    it('can create multiple products at once', function () {
+    it('can create multiple products at once, sent as a raw array without a wrapper', function () {
         Http::fake([
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
@@ -261,6 +297,14 @@ describe('Produto Resource', function () {
         expect($result['success'])->toBeTrue()
             ->and($result['created'])->toBe(2)
             ->and($result['products'])->toHaveCount(2);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->data() === [
+                    ['nome' => 'Produto 1', 'preco' => 99.90, 'unidadeMedida' => 'UN'],
+                    ['nome' => 'Produto 2', 'preco' => 149.90, 'unidadeMedida' => 'UN'],
+                ];
+        });
     });
 
     it('throws exception when createMany receives empty array', function () {
@@ -318,6 +362,94 @@ describe('Entidade Resource', function () {
         $builder = $manager->entidades()->byCpfCnpj('12345678901');
 
         expect($builder->toQueryString())->toContain('cnpjCpf.eq=12345678901');
+    });
+
+    it('can create an entity, wrapped in a single "entidade" level', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/entidades' => Http::response([
+                'codigo' => '001',
+                'nome' => 'Cliente Teste',
+            ], 201),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $entidade = $manager->entidades()->create([
+            'nome' => 'Cliente Teste',
+            'tipo' => Entidade::TIPO_CLIENTE,
+        ]);
+
+        expect($entidade['codigo'])->toBe('001');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/entidades'
+                && $request->data() === [
+                    'entidade' => [
+                        'nome' => 'Cliente Teste',
+                        'tipo' => Entidade::TIPO_CLIENTE,
+                    ],
+                ];
+        });
+    });
+
+    it('can update an entity, wrapped in a single "entidade" level', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/entidades' => Http::response([
+                'codigo' => '001',
+                'nome' => 'Cliente Atualizado',
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $entidade = $manager->entidades()->update([
+            'codigo' => '001',
+            'nome' => 'Cliente Atualizado',
+        ]);
+
+        expect($entidade['nome'])->toBe('Cliente Atualizado');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'PUT'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/entidades'
+                && $request->data() === [
+                    'entidade' => [
+                        'codigo' => '001',
+                        'nome' => 'Cliente Atualizado',
+                    ],
+                ];
+        });
+    });
+
+    it('can delete an entity via DELETE with the code as a path parameter', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/entidades/001' => Http::response(null, 204),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $result = $manager->entidades()->delete('001');
+
+        expect($result)->toBeTrue();
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'DELETE'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/entidades/001'
+                && $request->data() === [];
+        });
     });
 });
 
@@ -399,6 +531,94 @@ describe('Dav Resource', function () {
         expect($query)->toContain('data.ge=2024-01-01')
             ->and($query)->toContain('data.le=2024-12-31');
     });
+
+    it('can create a DAV, wrapped in a single "dav" level', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/davs' => Http::response([
+                'codigo' => '001',
+                'tipoDocumento' => Dav::TIPO_ORCAMENTO,
+            ], 201),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $dav = $manager->davs()->create([
+            'tipoDocumento' => Dav::TIPO_ORCAMENTO,
+            'codigoCliente' => 'CLI001',
+        ]);
+
+        expect($dav['codigo'])->toBe('001');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/davs'
+                && $request->data() === [
+                    'dav' => [
+                        'tipoDocumento' => Dav::TIPO_ORCAMENTO,
+                        'codigoCliente' => 'CLI001',
+                    ],
+                ];
+        });
+    });
+
+    it('can update a DAV, wrapped in a single "dav" level', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/davs' => Http::response([
+                'codigo' => '001',
+                'status' => Dav::STATUS_FECHADO,
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $dav = $manager->davs()->update([
+            'codigo' => '001',
+            'status' => Dav::STATUS_FECHADO,
+        ]);
+
+        expect($dav['status'])->toBe(Dav::STATUS_FECHADO);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'PUT'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/davs'
+                && $request->data() === [
+                    'dav' => [
+                        'codigo' => '001',
+                        'status' => Dav::STATUS_FECHADO,
+                    ],
+                ];
+        });
+    });
+
+    it('can delete a DAV via DELETE with the code as a path parameter', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/davs/001' => Http::response(null, 204),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $result = $manager->davs()->delete('001');
+
+        expect($result)->toBeTrue();
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'DELETE'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/davs/001'
+                && $request->data() === [];
+        });
+    });
 });
 
 describe('SaldoEstoque Resource', function () {
@@ -444,7 +664,7 @@ describe('SaldoEstoque Resource', function () {
             ->and($balance['quantidade'])->toBe(100);
     });
 
-    it('can update stock balance', function () {
+    it('can update stock balance, wrapped in a single "saldoEstoque" level', function () {
         Http::fake([
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
@@ -466,6 +686,40 @@ describe('SaldoEstoque Resource', function () {
         ]);
 
         expect($result['quantidade'])->toBe(150);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v2/saldo-estoque'
+                && $request->data() === [
+                    'saldoEstoque' => [
+                        'produto' => 'PROD001',
+                        'quantidade' => 150,
+                        'filial' => 1,
+                    ],
+                ];
+        });
+    });
+
+    it('can delete a stock balance via DELETE with the code as a path parameter', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v2/saldo-estoque/PROD001' => Http::response(null, 204),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $result = $manager->saldoEstoque()->delete('PROD001');
+
+        expect($result)->toBeTrue();
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'DELETE'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v2/saldo-estoque/PROD001'
+                && $request->data() === [];
+        });
     });
 });
 

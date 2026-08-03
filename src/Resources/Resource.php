@@ -23,6 +23,12 @@ abstract class Resource implements ResourceInterface
      */
     protected string $primaryKey = 'codigo';
 
+    /**
+     * The key used to wrap the payload sent by create() and update().
+     * Resources without a wrapper (null) send the payload as-is.
+     */
+    protected ?string $wrapper = null;
+
     public function __construct(Client $client)
     {
         $this->client = $client;
@@ -67,7 +73,7 @@ abstract class Resource implements ResourceInterface
      */
     public function create(array $data): array
     {
-        $response = $this->client->post($this->endpoint, $data);
+        $response = $this->client->post($this->endpoint, $this->wrap($data));
 
         /** @var array<string, mixed> $result */
         $result = $response->json() ?? [];
@@ -83,7 +89,7 @@ abstract class Resource implements ResourceInterface
      */
     public function update(array $data): array
     {
-        $response = $this->client->put($this->endpoint, $data);
+        $response = $this->client->put($this->endpoint, $this->wrap($data));
 
         /** @var array<string, mixed> $result */
         $result = $response->json() ?? [];
@@ -92,15 +98,24 @@ abstract class Resource implements ResourceInterface
     }
 
     /**
-     * Delete a resource by its code.
+     * Delete a resource by its code, addressed as a path parameter.
      */
     public function delete(string $code): bool
     {
-        $response = $this->client->delete($this->endpoint, [
-            $this->primaryKey => $code,
-        ]);
+        $response = $this->client->delete("{$this->endpoint}/{$code}");
 
         return $response->successful();
+    }
+
+    /**
+     * Wrap the payload under the resource's wrapper key, when declared.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function wrap(array $data): array
+    {
+        return $this->wrapper === null ? $data : [$this->wrapper => $data];
     }
 
     /**

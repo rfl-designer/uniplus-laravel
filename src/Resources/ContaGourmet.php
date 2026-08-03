@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
+use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 
 /**
@@ -318,9 +319,11 @@ class ContaGourmet extends Resource
 
     /**
      * Delete is not supported for Gourmet accounts.
+     *
+     * @throws UniplusException
      */
     public function delete(string $code): bool
     {
-        return false;
+        throw new UniplusException('Delete operation is not supported by the Gourmet contract.');
     }
 }

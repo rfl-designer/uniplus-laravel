@@ -19,6 +19,8 @@ class RegistroProducao extends Resource
 
     protected string $primaryKey = 'codigo';
 
+    protected ?string $wrapper = 'registroProducao';
+
     /**
      * Find production records by branch.
      */
@@ -84,7 +86,7 @@ class RegistroProducao extends Resource
      */
     public function createRecord(array $data): array
     {
-        return $this->create(['registroProducao' => $data]);
+        return $this->create($data);
     }
 
     /**

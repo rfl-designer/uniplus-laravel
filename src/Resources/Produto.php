@@ -12,6 +12,8 @@ class Produto extends Resource
 
     protected string $primaryKey = 'codigo';
 
+    protected ?string $wrapper = 'produto';
+
     /**
      * Find products changed after a specific timestamp.
      *
