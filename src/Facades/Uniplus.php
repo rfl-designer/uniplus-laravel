@@ -6,7 +6,10 @@ namespace Uniplus\Facades;
 
 use Illuminate\Support\Facades\Facade;
 use Uniplus\Resources\Dav;
+use Uniplus\Resources\DocumentoFinanceiro;
 use Uniplus\Resources\Entidade;
+use Uniplus\Resources\EntidadeOcorrencia;
+use Uniplus\Resources\FichaTecnica;
 use Uniplus\Resources\Produto;
 use Uniplus\Resources\SaldoEstoque;
 use Uniplus\Resources\Venda;
@@ -22,6 +25,9 @@ use Uniplus\UniplusManager;
  * @method static SaldoEstoque saldoEstoque()
  * @method static Venda vendas()
  * @method static VendaItem vendaItens()
+ * @method static DocumentoFinanceiro documentoFinanceiro()
+ * @method static FichaTecnica fichaTecnica()
+ * @method static EntidadeOcorrencia entidadeOcorrencias()
  * @method static void fake(array<string, mixed> $responses = [])
  * @method static void assertSent(string $method, string $url)
  * @method static void assertNotSent(string $url)

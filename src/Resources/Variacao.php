@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
-use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 
 /**
  * Product variations (grid/size/color) resource.
  *
  * Endpoint: /public-api/v1/variacoes
- * Methods: GET, POST, PUT
+ * Methods: GET, POST, PUT, DELETE
  */
 class Variacao extends Resource
 {
@@ -96,16 +95,6 @@ class Variacao extends Resource
     public function updateVariation(array $data): array
     {
         return $this->update($data);
-    }
-
-    /**
-     * Delete is not supported for variations.
-     *
-     * @throws UniplusException
-     */
-    public function delete(string $code): bool
-    {
-        throw new UniplusException('Delete operation is not supported for Variacoes.');
     }
 
     /**

@@ -4,19 +4,25 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
+use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 
 /**
  * Service orders resource.
  *
  * Endpoint: /public-api/v1/ordem-servico
- * Methods: GET
+ * Methods: GET, POST, PUT
+ *
+ * The contract has no DELETE /ordem-servico; item removal is the only
+ * DELETE-with-body operation and is handled by the dedicated removeItems().
  */
-class OrdemServico extends ReadOnlyResource
+class OrdemServico extends Resource
 {
     protected string $endpoint = 'public-api/v1/ordem-servico';
 
     protected string $primaryKey = 'codigo';
+
+    protected ?string $wrapper = 'ordemServico';
 
     /**
      * Service order status constants.
@@ -164,5 +170,93 @@ class OrdemServico extends ReadOnlyResource
     public function changedAfter(int $timestamp): Builder
     {
         return $this->where('currentTimeMillis', '>=', $timestamp);
+    }
+
+    /**
+     * Change the status of a service order via the dedicated route.
+     *
+     * The contract is not verifiable locally for int vs string on `codigo`/`id`;
+     * both are accepted and serialized exactly as given.
+     *
+     * @return array<string, mixed>
+     */
+    public function changeStatus(int|string $code, int $status, int|string|null $id = null): array
+    {
+        $data = $id === null
+            ? ['codigo' => $code, 'status' => $status]
+            : ['id' => $id, 'codigo' => $code, 'status' => $status];
+
+        $response = $this->client->post("{$this->endpoint}/alterar-status", $data);
+
+        /** @var array<string, mixed> $result */
+        $result = $response->json() ?? [];
+
+        return $result;
+    }
+
+    /**
+     * Add items to a service order.
+     *
+     * @param  array<int, array<string, mixed>>  $items
+     * @param  array<string, mixed>  $additionalData  Optional discount fields per the contract
+     * @return array<string, mixed>
+     */
+    public function addItems(int|string $code, array $items, array $additionalData = []): array
+    {
+        $data = array_merge($additionalData, ['codigo' => $code, 'itens' => $items]);
+
+        $response = $this->client->post("{$this->endpoint}/item", $data);
+
+        /** @var array<string, mixed> $result */
+        $result = $response->json() ?? [];
+
+        return $result;
+    }
+
+    /**
+     * Update items of a service order.
+     *
+     * @param  array<int, array<string, mixed>>  $items
+     * @param  array<string, mixed>  $additionalData  Optional discount fields per the contract
+     * @return array<string, mixed>
+     */
+    public function updateItems(int|string $code, array $items, array $additionalData = []): array
+    {
+        $data = array_merge($additionalData, ['codigo' => $code, 'itens' => $items]);
+
+        $response = $this->client->put("{$this->endpoint}/item", $data);
+
+        /** @var array<string, mixed> $result */
+        $result = $response->json() ?? [];
+
+        return $result;
+    }
+
+    /**
+     * Remove items from a service order.
+     *
+     * This is the contract's only DELETE-with-body operation; it is a
+     * dedicated call and does not go through the generic delete().
+     *
+     * @param  array<int, mixed>  $items  Each item follows the contract's own representation
+     */
+    public function removeItems(int|string $code, array $items): bool
+    {
+        $response = $this->client->delete("{$this->endpoint}/item", [
+            'codigo' => $code,
+            'itens' => $items,
+        ]);
+
+        return $response->successful();
+    }
+
+    /**
+     * Delete is not supported for service orders.
+     *
+     * @throws UniplusException
+     */
+    public function delete(string $code): bool
+    {
+        throw new UniplusException('Delete operation is not supported for OrdemServico — the contract has no DELETE /ordem-servico.');
     }
 }

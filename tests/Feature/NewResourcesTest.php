@@ -1009,10 +1009,38 @@ describe('Ean Resource - Extended', function () {
         });
     });
 
-    it('throws exception on update', function () {
+    it('can update an EAN, wrapped in a single "ean" level', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/eans' => Http::response([
+                'ean' => '7891234567890',
+                'produto' => 'PROD001',
+            ]),
+        ]);
+
         $manager = app(UniplusManager::class);
-        $manager->eans()->update(['ean' => 'Test']);
-    })->throws(UniplusException::class, 'Update operation is not supported for EANs');
+        $result = $manager->eans()->update([
+            'ean' => '7891234567890',
+            'produto' => 'PROD001',
+        ]);
+
+        expect($result['produto'])->toBe('PROD001');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'PUT'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/eans'
+                && $request->data() === [
+                    'ean' => [
+                        'ean' => '7891234567890',
+                        'produto' => 'PROD001',
+                    ],
+                ];
+        });
+    });
 });
 
 describe('Embalagem Resource - Extended', function () {
@@ -1122,10 +1150,74 @@ describe('Embalagem Resource - Extended', function () {
         });
     });
 
-    it('throws exception on delete', function () {
+    it('can delete a packaging via DELETE with the code as a path parameter', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/embalagens/1' => Http::response(null, 204),
+        ]);
+
         $manager = app(UniplusManager::class);
-        $manager->embalagens()->delete('1');
-    })->throws(UniplusException::class, 'Delete operation is not supported for Embalagens');
+        $result = $manager->embalagens()->delete('1');
+
+        expect($result)->toBeTrue();
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'DELETE'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/embalagens/1'
+                && $request->data() === [];
+        });
+    });
+});
+
+describe('Embalagem Resource - Rota dedicada por-produto (S6)', function () {
+    it('lists packaging for a product via the dedicated route', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/embalagens/por-produto*' => Http::response([
+                ['id' => 1, 'produto' => 'PROD001', 'unidadeMedida' => 'CX'],
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $embalagens = $manager->embalagens()->porProduto('PROD001');
+
+        expect($embalagens)->toBeInstanceOf(Collection::class)
+            ->and($embalagens)->toHaveCount(1);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'GET'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/embalagens/por-produto?codigoProduto=PROD001';
+        });
+    });
+
+    it('includes tipos in the query when informed', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/embalagens/por-produto*' => Http::response([
+                ['id' => 1, 'produto' => 'PROD001', 'unidadeMedida' => 'CX'],
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $manager->embalagens()->porProduto('PROD001', [Embalagem::TIPO_COMPRA_VENDA, Embalagem::TIPO_SOMENTE_VENDA]);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'GET'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/embalagens/por-produto?codigoProduto=PROD001&tipos%5B0%5D=0&tipos%5B1%5D=2';
+        });
+    });
 });
 
 describe('RegistroProducao Resource - Extended', function () {
@@ -1193,15 +1285,60 @@ describe('RegistroProducao Resource - Extended', function () {
         });
     });
 
-    it('throws exception on update', function () {
-        $manager = app(UniplusManager::class);
-        $manager->registroProducao()->update(['descricao' => 'Test']);
-    })->throws(UniplusException::class, 'Update operation is not supported for RegistroProducao');
+    it('can update a production record, wrapped in a single "registroProducao" level', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/registro-producao' => Http::response([
+                'codigo' => '12345',
+                'descricao' => 'Produção corrigida',
+            ]),
+        ]);
 
-    it('throws exception on delete', function () {
         $manager = app(UniplusManager::class);
-        $manager->registroProducao()->delete('1');
-    })->throws(UniplusException::class, 'Delete operation is not supported for RegistroProducao');
+        $result = $manager->registroProducao()->update([
+            'codigo' => '12345',
+            'descricao' => 'Produção corrigida',
+        ]);
+
+        expect($result['descricao'])->toBe('Produção corrigida');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'PUT'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/registro-producao'
+                && $request->data() === [
+                    'registroProducao' => [
+                        'codigo' => '12345',
+                        'descricao' => 'Produção corrigida',
+                    ],
+                ];
+        });
+    });
+
+    it('can delete a production record via DELETE with the code as a path parameter', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/registro-producao/1' => Http::response(null, 204),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $result = $manager->registroProducao()->delete('1');
+
+        expect($result)->toBeTrue();
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'DELETE'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/registro-producao/1'
+                && $request->data() === [];
+        });
+    });
 });
 
 describe('Variacao Resource - Extended', function () {
@@ -1297,10 +1434,27 @@ describe('Variacao Resource - Extended', function () {
         });
     });
 
-    it('throws exception on delete', function () {
+    it('can delete a variation via DELETE with the code as a path parameter', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/variacoes/VAR001' => Http::response(null, 204),
+        ]);
+
         $manager = app(UniplusManager::class);
-        $manager->variacoes()->delete('VAR001');
-    })->throws(UniplusException::class, 'Delete operation is not supported for Variacoes');
+        $result = $manager->variacoes()->delete('VAR001');
+
+        expect($result)->toBeTrue();
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'DELETE'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/variacoes/VAR001'
+                && $request->data() === [];
+        });
+    });
 
     it('can import multiple variations at once, sent as a raw array without a wrapper', function () {
         Http::fake([

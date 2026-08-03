@@ -10,9 +10,12 @@ use Uniplus\Exceptions\ConnectionException;
 use Uniplus\Resources\Commons\CommonsFactory;
 use Uniplus\Resources\ContaGourmet;
 use Uniplus\Resources\Dav;
+use Uniplus\Resources\DocumentoFinanceiro;
 use Uniplus\Resources\Ean;
 use Uniplus\Resources\Embalagem;
 use Uniplus\Resources\Entidade;
+use Uniplus\Resources\EntidadeOcorrencia;
+use Uniplus\Resources\FichaTecnica;
 use Uniplus\Resources\GrupoShop;
 use Uniplus\Resources\ItemNotaEntrada;
 use Uniplus\Resources\ItemNotaEntradaCompra;
@@ -373,5 +376,33 @@ class UniplusManager
     public function commons(): CommonsFactory
     {
         return $this->connection()->commons();
+    }
+
+    // =========================================================================
+    // Proxy methods - Read-Only Resources (Phase 4)
+    // =========================================================================
+
+    /**
+     * Get the DocumentoFinanceiro resource from the default connection.
+     */
+    public function documentoFinanceiro(): DocumentoFinanceiro
+    {
+        return $this->connection()->documentoFinanceiro();
+    }
+
+    /**
+     * Get the FichaTecnica resource from the default connection.
+     */
+    public function fichaTecnica(): FichaTecnica
+    {
+        return $this->connection()->fichaTecnica();
+    }
+
+    /**
+     * Get the EntidadeOcorrencia resource from the default connection.
+     */
+    public function entidadeOcorrencias(): EntidadeOcorrencia
+    {
+        return $this->connection()->entidadeOcorrencias();
     }
 }
