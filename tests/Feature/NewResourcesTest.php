@@ -954,7 +954,7 @@ describe('Ean Resource - Extended', function () {
         expect($builder->toQueryString())->toContain('variacao.eq=VAR001');
     });
 
-    it('can add an EAN using helper method', function () {
+    it('can add an EAN using helper method, wrapped exactly once', function () {
         Http::fake([
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
@@ -974,22 +974,39 @@ describe('Ean Resource - Extended', function () {
         ]);
 
         expect($result['ean'])->toBe('7891234567890');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/eans'
+                && $request->data() === [
+                    'ean' => [
+                        'produto' => 'PROD001',
+                        'ean' => '7891234567890',
+                    ],
+                ];
+        });
     });
 
-    it('can remove an EAN', function () {
+    it('can remove an EAN via DELETE with the code as a path parameter', function () {
         Http::fake([
             '*/oauth/token' => Http::response([
                 'access_token' => 'test-token',
                 'token_type' => 'Bearer',
                 'expires_in' => 3600,
             ]),
-            '*/public-api/v1/eans' => Http::response(null, 204),
+            '*/public-api/v1/eans/7891234567890' => Http::response(null, 204),
         ]);
 
         $manager = app(UniplusManager::class);
         $result = $manager->eans()->removeEan('7891234567890');
 
         expect($result)->toBeTrue();
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'DELETE'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/eans/7891234567890'
+                && $request->data() === [];
+        });
     });
 
     it('throws exception on update', function () {
@@ -1060,6 +1077,16 @@ describe('Embalagem Resource - Extended', function () {
         ]);
 
         expect($result['unidadeMedida'])->toBe('CX');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->data() === [
+                    'embalagem' => [
+                        'produto' => 'PROD001',
+                        'unidadeMedida' => 'CX',
+                    ],
+                ];
+        });
     });
 
     it('can update packaging using helper method', function () {
@@ -1083,6 +1110,16 @@ describe('Embalagem Resource - Extended', function () {
         ]);
 
         expect($result['fatorConversao'])->toBe(12);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'PUT'
+                && $request->data() === [
+                    'embalagem' => [
+                        'produto' => 'PROD001',
+                        'fatorConversao' => 12,
+                    ],
+                ];
+        });
     });
 
     it('throws exception on delete', function () {
@@ -1142,6 +1179,18 @@ describe('RegistroProducao Resource - Extended', function () {
         ]);
 
         expect($result['codigo'])->toBe('12345');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->data() === [
+                    'registroProducao' => [
+                        'descricao' => 'Produção do dia',
+                        'itens' => [
+                            ['idProduto' => 1, 'quantidade' => 100],
+                        ],
+                    ],
+                ];
+        });
     });
 
     it('throws exception on update', function () {
@@ -1203,6 +1252,17 @@ describe('Variacao Resource - Extended', function () {
         ]);
 
         expect($result['descricao'])->toBe('Vermelho');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->data() === [
+                    'variacao' => [
+                        'produto' => 'PROD001',
+                        'codigoGrade' => 'COR',
+                        'descricao' => 'Vermelho',
+                    ],
+                ];
+        });
     });
 
     it('can update variation using helper method', function () {
@@ -1225,6 +1285,16 @@ describe('Variacao Resource - Extended', function () {
         ]);
 
         expect($result['descricao'])->toBe('Azul');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'PUT'
+                && $request->data() === [
+                    'variacao' => [
+                        'variacao' => 'VAR001',
+                        'descricao' => 'Azul',
+                    ],
+                ];
+        });
     });
 
     it('throws exception on delete', function () {
@@ -1785,10 +1855,8 @@ describe('ContaGourmet Resource - Extended', function () {
         expect($result['numero'])->toBe(10);
     });
 
-    it('delete returns false', function () {
+    it('throws exception on delete because the Gourmet contract does not support it', function () {
         $manager = app(UniplusManager::class);
-        $result = $manager->contaGourmet()->delete('10');
-
-        expect($result)->toBeFalse();
-    });
+        $manager->contaGourmet()->delete('10');
+    })->throws(UniplusException::class, 'Delete operation is not supported by the Gourmet contract.');
 });
