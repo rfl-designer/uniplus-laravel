@@ -116,16 +116,42 @@ describe('DocumentoFinanceiro Resource', function () {
         });
     });
 
-    it('can use the query builder with where/limit/offset', function () {
+    it('sends where/limit/offset filters to the API via the query builder', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/documento-financeiro*' => Http::response([
+                ['idDocumento' => 1, 'descricao' => 'Documento 1'],
+            ]),
+        ]);
+
         $manager = app(UniplusManager::class);
         $builder = $manager->documentoFinanceiro()->where('status', 'aberto')->limit(10)->offset(5);
 
         expect($builder)->toBeInstanceOf(Builder::class);
 
-        $query = $builder->toQueryString();
-        expect($query)->toContain('status.eq=aberto')
-            ->and($query)->toContain('limit=10')
-            ->and($query)->toContain('offset=5');
+        $documentos = $builder->get();
+
+        expect($documentos)->toBeInstanceOf(Collection::class)
+            ->and($documentos)->toHaveCount(1);
+
+        Http::assertSent(function ($request) {
+            if ($request->method() !== 'GET') {
+                return false;
+            }
+
+            $parts = parse_url($request->url());
+            $endpoint = ($parts['scheme'] ?? '').'://'.($parts['host'] ?? '').($parts['path'] ?? '');
+
+            if ($endpoint !== 'https://api.test.uniplus.com/public-api/v1/documento-financeiro') {
+                return false;
+            }
+
+            return ($parts['query'] ?? '') === 'status.eq=aberto&limit=10&offset=5';
+        });
     });
 
     it('throws on create', function () {
@@ -201,14 +227,42 @@ describe('FichaTecnica Resource', function () {
         });
     });
 
-    it('can use the query builder with where/limit/offset', function () {
+    it('sends where/limit/offset filters to the API via the query builder', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/ficha-tecnica*' => Http::response([
+                ['codigo' => 'FT001', 'descricao' => 'Ficha 1'],
+            ]),
+        ]);
+
         $manager = app(UniplusManager::class);
         $builder = $manager->fichaTecnica()->where('produto', 'PROD001')->limit(20)->offset(0);
 
-        $query = $builder->toQueryString();
-        expect($query)->toContain('produto.eq=PROD001')
-            ->and($query)->toContain('limit=20')
-            ->and($query)->toContain('offset=0');
+        expect($builder)->toBeInstanceOf(Builder::class);
+
+        $fichas = $builder->get();
+
+        expect($fichas)->toBeInstanceOf(Collection::class)
+            ->and($fichas)->toHaveCount(1);
+
+        Http::assertSent(function ($request) {
+            if ($request->method() !== 'GET') {
+                return false;
+            }
+
+            $parts = parse_url($request->url());
+            $endpoint = ($parts['scheme'] ?? '').'://'.($parts['host'] ?? '').($parts['path'] ?? '');
+
+            if ($endpoint !== 'https://api.test.uniplus.com/public-api/v1/ficha-tecnica') {
+                return false;
+            }
+
+            return ($parts['query'] ?? '') === 'produto.eq=PROD001&limit=20&offset=0';
+        });
     });
 
     it('throws on create', function () {
@@ -284,14 +338,42 @@ describe('EntidadeOcorrencia Resource', function () {
         });
     });
 
-    it('can use the query builder with where/limit/offset', function () {
+    it('sends where/limit/offset filters to the API via the query builder', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/entidades-ocorrencias*' => Http::response([
+                ['codigo' => 'OC001', 'descricao' => 'Ocorrência 1'],
+            ]),
+        ]);
+
         $manager = app(UniplusManager::class);
         $builder = $manager->entidadeOcorrencias()->where('entidade', 'ENT001')->limit(15)->offset(3);
 
-        $query = $builder->toQueryString();
-        expect($query)->toContain('entidade.eq=ENT001')
-            ->and($query)->toContain('limit=15')
-            ->and($query)->toContain('offset=3');
+        expect($builder)->toBeInstanceOf(Builder::class);
+
+        $ocorrencias = $builder->get();
+
+        expect($ocorrencias)->toBeInstanceOf(Collection::class)
+            ->and($ocorrencias)->toHaveCount(1);
+
+        Http::assertSent(function ($request) {
+            if ($request->method() !== 'GET') {
+                return false;
+            }
+
+            $parts = parse_url($request->url());
+            $endpoint = ($parts['scheme'] ?? '').'://'.($parts['host'] ?? '').($parts['path'] ?? '');
+
+            if ($endpoint !== 'https://api.test.uniplus.com/public-api/v1/entidades-ocorrencias') {
+                return false;
+            }
+
+            return ($parts['query'] ?? '') === 'entidade.eq=ENT001&limit=15&offset=3';
+        });
     });
 
     it('throws on create', function () {
