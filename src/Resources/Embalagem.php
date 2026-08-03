@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Uniplus\Resources;
 
 use Illuminate\Support\Collection;
-use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 
 /**
@@ -107,16 +106,6 @@ class Embalagem extends Resource
     public function updatePackaging(array $data): array
     {
         return $this->update($data);
-    }
-
-    /**
-     * Delete is not supported for Embalagens.
-     *
-     * @throws UniplusException
-     */
-    public function delete(string $code): bool
-    {
-        throw new UniplusException('Delete operation is not supported for Embalagens.');
     }
 
     /**
