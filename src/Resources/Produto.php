@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
+use Illuminate\Support\Collection;
 use Uniplus\Query\Builder;
 
 class Produto extends Resource
@@ -98,5 +99,30 @@ class Produto extends Resource
         $result = $response->json() ?? [];
 
         return $result;
+    }
+
+    /**
+     * Search products via the dedicated search route.
+     *
+     * @return Collection<int, array<string, mixed>>
+     */
+    public function search(string $searchParam, ?bool $produtosInativos = null, ?int $idFilial = null): Collection
+    {
+        $query = ['searchParam' => $searchParam];
+
+        if ($produtosInativos !== null) {
+            $query['produtosInativos'] = $produtosInativos ? 'true' : 'false';
+        }
+
+        if ($idFilial !== null) {
+            $query['idFilial'] = $idFilial;
+        }
+
+        $response = $this->client->get("{$this->endpoint}/search", $query);
+
+        /** @var array<int, array<string, mixed>> $data */
+        $data = $response->json() ?? [];
+
+        return collect($data);
     }
 }

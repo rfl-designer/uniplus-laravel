@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
+use Illuminate\Support\Collection;
 use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 
@@ -116,5 +117,27 @@ class Embalagem extends Resource
     public function delete(string $code): bool
     {
         throw new UniplusException('Delete operation is not supported for Embalagens.');
+    }
+
+    /**
+     * List packaging for a product via the dedicated route.
+     *
+     * @param  array<int, int>|null  $tipos
+     * @return Collection<int, array<string, mixed>>
+     */
+    public function porProduto(string $codigoProduto, ?array $tipos = null): Collection
+    {
+        $query = ['codigoProduto' => $codigoProduto];
+
+        if ($tipos !== null) {
+            $query['tipos'] = $tipos;
+        }
+
+        $response = $this->client->get("{$this->endpoint}/por-produto", $query);
+
+        /** @var array<int, array<string, mixed>> $data */
+        $data = $response->json() ?? [];
+
+        return collect($data);
     }
 }
