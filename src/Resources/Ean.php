@@ -19,6 +19,8 @@ class Ean extends Resource
 
     protected string $primaryKey = 'ean';
 
+    protected ?string $wrapper = 'ean';
+
     /**
      * Find EANs by product code.
      */
@@ -51,7 +53,7 @@ class Ean extends Resource
      */
     public function addEan(array $data): array
     {
-        return $this->create(['ean' => $data]);
+        return $this->create($data);
     }
 
     /**

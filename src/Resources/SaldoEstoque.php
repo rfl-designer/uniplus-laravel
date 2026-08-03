@@ -13,6 +13,8 @@ class SaldoEstoque extends Resource
 
     protected string $primaryKey = 'produto';
 
+    protected ?string $wrapper = 'saldoEstoque';
+
     /**
      * Find stock balance by product.
      */

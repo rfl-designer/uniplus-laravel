@@ -19,6 +19,8 @@ class Embalagem extends Resource
 
     protected string $primaryKey = 'id';
 
+    protected ?string $wrapper = 'embalagem';
+
     /**
      * Packaging type constants.
      */
@@ -92,7 +94,7 @@ class Embalagem extends Resource
      */
     public function addPackaging(array $data): array
     {
-        return $this->create(['embalagem' => $data]);
+        return $this->create($data);
     }
 
     /**
@@ -103,7 +105,7 @@ class Embalagem extends Resource
      */
     public function updatePackaging(array $data): array
     {
-        return $this->update(['embalagem' => $data]);
+        return $this->update($data);
     }
 
     /**

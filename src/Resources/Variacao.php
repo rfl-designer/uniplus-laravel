@@ -19,6 +19,8 @@ class Variacao extends Resource
 
     protected string $primaryKey = 'variacao';
 
+    protected ?string $wrapper = 'variacao';
+
     /**
      * Variation type constants.
      */
@@ -82,7 +84,7 @@ class Variacao extends Resource
      */
     public function addVariation(array $data): array
     {
-        return $this->create(['variacao' => $data]);
+        return $this->create($data);
     }
 
     /**
@@ -93,7 +95,7 @@ class Variacao extends Resource
      */
     public function updateVariation(array $data): array
     {
-        return $this->update(['variacao' => $data]);
+        return $this->update($data);
     }
 
     /**

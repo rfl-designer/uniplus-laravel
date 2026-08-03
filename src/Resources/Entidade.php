@@ -12,6 +12,8 @@ class Entidade extends Resource
 
     protected string $primaryKey = 'codigo';
 
+    protected ?string $wrapper = 'entidade';
+
     /**
      * Entity types.
      */
