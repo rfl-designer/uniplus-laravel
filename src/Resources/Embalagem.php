@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
-use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 
 /**
  * Product packaging resource.
  *
  * Endpoint: /public-api/v1/embalagens
- * Methods: GET, POST, PUT
+ * Methods: GET, POST, PUT, DELETE
  */
 class Embalagem extends Resource
 {
@@ -106,15 +105,5 @@ class Embalagem extends Resource
     public function updatePackaging(array $data): array
     {
         return $this->update($data);
-    }
-
-    /**
-     * Delete is not supported for Embalagens.
-     *
-     * @throws UniplusException
-     */
-    public function delete(string $code): bool
-    {
-        throw new UniplusException('Delete operation is not supported for Embalagens.');
     }
 }

@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
-use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 
 /**
  * Additional EANs (barcodes) resource.
  *
  * Endpoint: /public-api/v1/eans
- * Methods: GET, POST, DELETE
+ * Methods: GET, POST, PUT, DELETE
  */
 class Ean extends Resource
 {
@@ -62,18 +61,5 @@ class Ean extends Resource
     public function removeEan(string $barcode): bool
     {
         return $this->delete($barcode);
-    }
-
-    /**
-     * Update is not supported for EANs.
-     *
-     * @param  array<string, mixed>  $data
-     * @return array<string, mixed>
-     *
-     * @throws UniplusException
-     */
-    public function update(array $data): array
-    {
-        throw new UniplusException('Update operation is not supported for EANs. Delete and create a new one instead.');
     }
 }
