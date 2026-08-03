@@ -115,12 +115,12 @@ class Entidade extends Resource
      *
      * @return Collection<int, array<string, mixed>>
      */
-    public function search(string $searchParam, ?int $tipoEntidade = null): Collection
+    public function search(string $searchParam, ?int $entityType = null): Collection
     {
         $query = ['searchParam' => $searchParam];
 
-        if ($tipoEntidade !== null) {
-            $query['tipoEntidade'] = $tipoEntidade;
+        if ($entityType !== null) {
+            $query['tipoEntidade'] = $entityType;
         }
 
         $response = $this->client->get("{$this->endpoint}/search", $query);
@@ -136,9 +136,9 @@ class Entidade extends Resource
      *
      * @return Collection<int, array<string, mixed>>
      */
-    public function porAlteracao(string $ponteiro): Collection
+    public function porAlteracao(string $pointer): Collection
     {
-        $response = $this->client->get("{$this->endpoint}/por-alteracao", ['ponteiro' => $ponteiro]);
+        $response = $this->client->get("{$this->endpoint}/por-alteracao", ['ponteiro' => $pointer]);
 
         /** @var array<int, array<string, mixed>> $data */
         $data = $response->json() ?? [];

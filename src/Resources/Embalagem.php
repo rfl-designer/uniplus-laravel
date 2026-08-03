@@ -122,15 +122,15 @@ class Embalagem extends Resource
     /**
      * List packaging for a product via the dedicated route.
      *
-     * @param  array<int, int>|null  $tipos
+     * @param  array<int, int>|null  $types
      * @return Collection<int, array<string, mixed>>
      */
-    public function porProduto(string $codigoProduto, ?array $tipos = null): Collection
+    public function porProduto(string $productCode, ?array $types = null): Collection
     {
-        $query = ['codigoProduto' => $codigoProduto];
+        $query = ['codigoProduto' => $productCode];
 
-        if ($tipos !== null) {
-            $query['tipos'] = $tipos;
+        if ($types !== null) {
+            $query['tipos'] = $types;
         }
 
         $response = $this->client->get("{$this->endpoint}/por-produto", $query);

@@ -106,16 +106,16 @@ class Produto extends Resource
      *
      * @return Collection<int, array<string, mixed>>
      */
-    public function search(string $searchParam, ?bool $produtosInativos = null, ?int $idFilial = null): Collection
+    public function search(string $searchParam, ?bool $includeInactiveProducts = null, ?int $branchId = null): Collection
     {
         $query = ['searchParam' => $searchParam];
 
-        if ($produtosInativos !== null) {
-            $query['produtosInativos'] = $produtosInativos ? 'true' : 'false';
+        if ($includeInactiveProducts !== null) {
+            $query['produtosInativos'] = $includeInactiveProducts ? 'true' : 'false';
         }
 
-        if ($idFilial !== null) {
-            $query['idFilial'] = $idFilial;
+        if ($branchId !== null) {
+            $query['idFilial'] = $branchId;
         }
 
         $response = $this->client->get("{$this->endpoint}/search", $query);
