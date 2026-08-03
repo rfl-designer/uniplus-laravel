@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 use Uniplus\Resources\Dav;
 use Uniplus\Resources\Entidade;
@@ -720,6 +721,224 @@ describe('SaldoEstoque Resource', function () {
                 && $request->url() === 'https://api.test.uniplus.com/public-api/v2/saldo-estoque/PROD001'
                 && $request->data() === [];
         });
+    });
+});
+
+describe('OrdemServico Resource (Writable)', function () {
+    it('can create a service order, wrapped in a single "ordemServico" level', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/ordem-servico' => Http::response([
+                'codigo' => 'OS001',
+                'status' => 1,
+            ], 201),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $os = $manager->ordemServico()->create([
+            'codigoCliente' => 'CLI001',
+            'idAtendente' => 1,
+        ]);
+
+        expect($os['codigo'])->toBe('OS001');
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/ordem-servico'
+                && $request->data() === [
+                    'ordemServico' => [
+                        'codigoCliente' => 'CLI001',
+                        'idAtendente' => 1,
+                    ],
+                ];
+        });
+    });
+
+    it('can update a service order, wrapped in a single "ordemServico" level', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/ordem-servico' => Http::response([
+                'codigo' => 'OS001',
+                'status' => 2,
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $os = $manager->ordemServico()->update([
+            'codigo' => 'OS001',
+            'status' => 2,
+        ]);
+
+        expect($os['status'])->toBe(2);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'PUT'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/ordem-servico'
+                && $request->data() === [
+                    'ordemServico' => [
+                        'codigo' => 'OS001',
+                        'status' => 2,
+                    ],
+                ];
+        });
+    });
+
+    it('can change the status of a service order via the dedicated route, with id when informed', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/ordem-servico/alterar-status' => Http::response([
+                'codigo' => 'OS001',
+                'status' => 3,
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $result = $manager->ordemServico()->changeStatus('OS001', 3, '123');
+
+        expect($result['status'])->toBe(3);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/ordem-servico/alterar-status'
+                && $request->data() === [
+                    'id' => '123',
+                    'codigo' => 'OS001',
+                    'status' => 3,
+                ];
+        });
+    });
+
+    it('can change the status of a service order without an id', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/ordem-servico/alterar-status' => Http::response([
+                'codigo' => 'OS001',
+                'status' => 4,
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $manager->ordemServico()->changeStatus('OS001', 4);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/ordem-servico/alterar-status'
+                && $request->data() === [
+                    'codigo' => 'OS001',
+                    'status' => 4,
+                ];
+        });
+    });
+
+    it('can add items to a service order, with optional discount fields', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/ordem-servico/item' => Http::response([
+                'codigo' => 'OS001',
+            ], 201),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $manager->ordemServico()->addItems('OS001', [
+            ['codigoProduto' => 'PROD001', 'quantidade' => 2],
+        ], [
+            'valorDesconto' => 10.0,
+        ]);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/ordem-servico/item'
+                && $request->data() === [
+                    'codigo' => 'OS001',
+                    'itens' => [
+                        ['codigoProduto' => 'PROD001', 'quantidade' => 2],
+                    ],
+                    'valorDesconto' => 10.0,
+                ];
+        });
+    });
+
+    it('can update items of a service order', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/ordem-servico/item' => Http::response([
+                'codigo' => 'OS001',
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $manager->ordemServico()->updateItems('OS001', [
+            ['codigoProduto' => 'PROD001', 'quantidade' => 3],
+        ]);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'PUT'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/ordem-servico/item'
+                && $request->data() === [
+                    'codigo' => 'OS001',
+                    'itens' => [
+                        ['codigoProduto' => 'PROD001', 'quantidade' => 3],
+                    ],
+                ];
+        });
+    });
+
+    it('can remove items from a service order via DELETE with a body', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/ordem-servico/item' => Http::response(null, 204),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $result = $manager->ordemServico()->removeItems('OS001', ['ITEM001', 'ITEM002']);
+
+        expect($result)->toBeTrue();
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'DELETE'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/ordem-servico/item'
+                && $request->data() === [
+                    'codigo' => 'OS001',
+                    'itens' => ['ITEM001', 'ITEM002'],
+                ];
+        });
+    });
+
+    it('throws exception on delete because the contract has no DELETE /ordem-servico, without sending any request', function () {
+        $manager = app(UniplusManager::class);
+
+        expect(fn () => $manager->ordemServico()->delete('OS001'))
+            ->toThrow(UniplusException::class, 'the contract has no DELETE /ordem-servico');
+
+        Http::assertNothingSent();
     });
 });
 
