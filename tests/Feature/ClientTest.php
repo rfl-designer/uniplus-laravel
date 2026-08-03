@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Uniplus\Auth\TokenManager;
 use Uniplus\Connections\RemoteConnection;
 use Uniplus\Events\RequestFailed;
@@ -257,6 +258,57 @@ describe('Client Error Handling', function () {
 
         expect(fn () => $client->get('public-api/v1/test'))
             ->toThrow(ConnectionException::class);
+    });
+});
+
+describe('Client Multipart', function () {
+    it('throws a JsonException when the entity cannot be JSON-encoded and sends no request to the endpoint', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*' => Http::response([]),
+        ]);
+
+        $tokenManager = new TokenManager($this->connection);
+        $client = new Client($this->connection, $tokenManager);
+
+        expect(fn () => $client->postMultipart('public-api/v1/produtos/imagens', 'binary-image-content', 'produto.jpg', [
+            'descricao' => "Invalid UTF-8: \xB1\x31",
+        ]))->toThrow(JsonException::class);
+
+        Http::assertNotSent(function ($request) {
+            return str_contains($request->url(), 'produtos/imagens');
+        });
+    });
+
+    it('logs has_body as true for multipart requests', function () {
+        config(['uniplus.logging.enabled' => true]);
+
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/produtos/imagens' => Http::response(['codigo' => 'IMG001'], 201),
+        ]);
+
+        Log::spy();
+
+        $tokenManager = new TokenManager($this->connection);
+        $client = new Client($this->connection, $tokenManager);
+
+        $client->postMultipart('public-api/v1/produtos/imagens', 'binary-image-content', 'produto.jpg', [
+            'codigoProduto' => 'PROD001',
+        ]);
+
+        Log::shouldHaveReceived('debug')
+            ->withArgs(function (string $message, array $context) {
+                return str_contains($message, 'Sending POST request') && ($context['has_body'] ?? null) === true;
+            });
     });
 });
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Uniplus\Events\RequestFailed;
 use Uniplus\Events\RequestSending;
 use Uniplus\Events\RequestSent;
+use Uniplus\Exceptions\ConnectionException;
 use Uniplus\UniplusManager;
 
 beforeEach(function () {
@@ -192,6 +193,40 @@ describe('Produto Resource - Image Upload', function () {
         }
 
         Event::assertNotDispatched(RequestFailed::class);
+        Event::assertNotDispatched(RequestSent::class);
+    });
+
+    it('dispatches RequestSending and RequestFailed (but not RequestSent) and propagates a ConnectionException on a connection failure during upload', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/produtos/imagens' => function () {
+                throw new Illuminate\Http\Client\ConnectionException('Connection failed');
+            },
+        ]);
+
+        Event::fake([RequestSending::class, RequestFailed::class, RequestSent::class]);
+
+        $manager = app(UniplusManager::class);
+
+        try {
+            $manager->produtos()->uploadImagem('PROD001', 1, 'Foto principal', 'binary-image-content', 'produto.jpg');
+            expect(false)->toBeTrue('Expected a ConnectionException to be thrown.');
+        } catch (ConnectionException $exception) {
+            expect($exception)->toBeInstanceOf(ConnectionException::class);
+        }
+
+        Event::assertDispatched(RequestSending::class, function ($event) {
+            return $event->method === 'POST' && str_contains($event->url, 'produtos/imagens');
+        });
+
+        Event::assertDispatched(RequestFailed::class, function ($event) {
+            return $event->method === 'POST';
+        });
+
         Event::assertNotDispatched(RequestSent::class);
     });
 });

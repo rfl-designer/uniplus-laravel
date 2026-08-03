@@ -67,6 +67,8 @@ class Client
      * and a JSON "entity" part.
      *
      * @param  array<string, mixed>  $entity
+     *
+     * @throws \JsonException if $entity cannot be JSON-encoded (e.g. invalid UTF-8).
      */
     public function postMultipart(string $endpoint, string $fileContents, string $filename, array $entity): Response
     {
@@ -130,7 +132,7 @@ class Client
         $this->logDebug("Sending {$method} request", [
             'url' => $url,
             'has_query' => isset($options['query']),
-            'has_body' => isset($options['json']),
+            'has_body' => isset($options['json']) || isset($options['multipart']),
         ]);
 
         try {
@@ -229,6 +231,8 @@ class Client
      * and a JSON "entity" part.
      *
      * @param  array{file: string, filename: string, entity: array<string, mixed>}  $multipart
+     *
+     * @throws \JsonException if $multipart['entity'] cannot be JSON-encoded (e.g. invalid UTF-8).
      */
     protected function sendMultipart(PendingRequest $pendingRequest, string $url, array $multipart): \Illuminate\Http\Client\Response
     {
@@ -237,7 +241,7 @@ class Client
             ->post($url, [
                 'entity' => [
                     'name' => 'entity',
-                    'contents' => json_encode($multipart['entity']),
+                    'contents' => json_encode($multipart['entity'], JSON_THROW_ON_ERROR),
                     'headers' => ['Content-Type' => 'application/json'],
                 ],
             ]);
