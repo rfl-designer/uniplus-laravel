@@ -63,6 +63,23 @@ class Client
     }
 
     /**
+     * Make a multipart/form-data POST request with a binary "file" part
+     * and a JSON "entity" part.
+     *
+     * @param  array<string, mixed>  $entity
+     */
+    public function postMultipart(string $endpoint, string $fileContents, string $filename, array $entity): Response
+    {
+        return $this->request('POST', $endpoint, [
+            'multipart' => [
+                'file' => $fileContents,
+                'filename' => $filename,
+                'entity' => $entity,
+            ],
+        ]);
+    }
+
+    /**
      * Make a PUT request.
      *
      * @param  array<string, mixed>  $data
@@ -96,7 +113,7 @@ class Client
     /**
      * Make an HTTP request.
      *
-     * @param  array{query?: array<string, mixed>, json?: array<array-key, mixed>}  $options
+     * @param  array{query?: array<string, mixed>, json?: array<array-key, mixed>, multipart?: array{file: string, filename: string, entity: array<string, mixed>}}  $options
      */
     protected function request(string $method, string $endpoint, array $options = []): Response
     {
@@ -117,7 +134,7 @@ class Client
         ]);
 
         try {
-            $pendingRequest = $this->createPendingRequest($token->getAuthorizationHeader());
+            $pendingRequest = $this->createPendingRequest($token->getAuthorizationHeader(), isset($options['multipart']));
 
             /** @var array<string, mixed> $queryData */
             $queryData = $options['query'] ?? [];
@@ -125,11 +142,12 @@ class Client
             /** @var array<array-key, mixed> $jsonData */
             $jsonData = $options['json'] ?? [];
 
-            $httpResponse = match ($method) {
-                'GET' => $pendingRequest->get($url, $queryData),
-                'POST' => $pendingRequest->post($url, $jsonData),
-                'PUT' => $pendingRequest->put($url, $jsonData),
-                'DELETE' => $pendingRequest->delete($url, $jsonData),
+            $httpResponse = match (true) {
+                $method === 'GET' => $pendingRequest->get($url, $queryData),
+                $method === 'POST' && isset($options['multipart']) => $this->sendMultipart($pendingRequest, $url, $options['multipart']),
+                $method === 'POST' => $pendingRequest->post($url, $jsonData),
+                $method === 'PUT' => $pendingRequest->put($url, $jsonData),
+                $method === 'DELETE' => $pendingRequest->delete($url, $jsonData),
                 default => throw new UniplusException("Unsupported HTTP method: {$method}"),
             };
 
@@ -173,26 +191,55 @@ class Client
     /**
      * Create a pending request with default configuration.
      *
+     * When building a multipart request, the "Content-Type" header is left
+     * for Guzzle to set (it only fills it in when the header is not already
+     * present), so the request carries the correct "multipart/form-data;
+     * boundary=..." value instead of "application/json".
+     *
      * @return PendingRequest<false>
      */
-    protected function createPendingRequest(string $authorizationHeader): PendingRequest
+    protected function createPendingRequest(string $authorizationHeader, bool $multipart = false): PendingRequest
     {
         $timeout = $this->config['timeout'] ?? 30;
         $retry = $this->config['retry'] ?? ['times' => 3, 'sleep' => 100];
         $retryTimes = $retry['times'] ?? 3;
         $retrySleep = $retry['sleep'] ?? 100;
 
+        $headers = [
+            'Authorization' => $authorizationHeader,
+            'Accept' => 'application/json',
+            'idusuario' => (string) $this->connection->getUserId(),
+            'idfilial' => (string) $this->connection->getBranchId(),
+        ];
+
+        if (! $multipart) {
+            $headers['Content-Type'] = 'application/json';
+        }
+
         return Http::timeout($timeout)
             ->retry($retryTimes, $retrySleep, function (Throwable $exception): bool {
                 // Only retry on connection exceptions, not on API errors
                 return $exception instanceof HttpConnectionException;
             })
-            ->withHeaders([
-                'Authorization' => $authorizationHeader,
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'idusuario' => (string) $this->connection->getUserId(),
-                'idfilial' => (string) $this->connection->getBranchId(),
+            ->withHeaders($headers);
+    }
+
+    /**
+     * Send a multipart/form-data POST request with a binary "file" part
+     * and a JSON "entity" part.
+     *
+     * @param  array{file: string, filename: string, entity: array<string, mixed>}  $multipart
+     */
+    protected function sendMultipart(PendingRequest $pendingRequest, string $url, array $multipart): \Illuminate\Http\Client\Response
+    {
+        return $pendingRequest
+            ->attach('file', $multipart['file'], $multipart['filename'])
+            ->post($url, [
+                'entity' => [
+                    'name' => 'entity',
+                    'contents' => json_encode($multipart['entity']),
+                    'headers' => ['Content-Type' => 'application/json'],
+                ],
             ]);
     }
 
