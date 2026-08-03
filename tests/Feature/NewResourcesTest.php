@@ -1301,6 +1301,47 @@ describe('Variacao Resource - Extended', function () {
         $manager = app(UniplusManager::class);
         $manager->variacoes()->delete('VAR001');
     })->throws(UniplusException::class, 'Delete operation is not supported for Variacoes');
+
+    it('can import multiple variations at once, sent as a raw array without a wrapper', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/variacoes/importar' => Http::response([
+                'success' => true,
+                'imported' => 2,
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $result = $manager->variacoes()->importMany([
+            ['produto' => 'PROD001', 'codigoGrade' => 'COR', 'descricao' => 'Vermelho'],
+            ['produto' => 'PROD001', 'codigoGrade' => 'COR', 'descricao' => 'Azul'],
+        ]);
+
+        expect($result['success'])->toBeTrue()
+            ->and($result['imported'])->toBe(2);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/variacoes/importar'
+                && $request->data() === [
+                    ['produto' => 'PROD001', 'codigoGrade' => 'COR', 'descricao' => 'Vermelho'],
+                    ['produto' => 'PROD001', 'codigoGrade' => 'COR', 'descricao' => 'Azul'],
+                ];
+        });
+    });
+
+    it('throws exception when importMany receives empty array without sending a request', function () {
+        $manager = app(UniplusManager::class);
+
+        expect(fn () => $manager->variacoes()->importMany([]))
+            ->toThrow(InvalidArgumentException::class, 'Variations array cannot be empty.');
+
+        Http::assertNothingSent();
+    });
 });
 
 describe('ItemNotaEntrada Resource - Extended', function () {
