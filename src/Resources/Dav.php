@@ -138,9 +138,9 @@ class Dav extends Resource
      * @param  array<string, mixed>  $params  Pagination params (offset, limit)
      * @return Collection<int, array<string, mixed>>
      */
-    public function items(string $codigoDAV, string $nrItem, array $params = []): Collection
+    public function items(string $davCode, string $itemNumber, array $params = []): Collection
     {
-        $response = $this->client->get("{$this->endpoint}/{$codigoDAV}/item/{$nrItem}", $params);
+        $response = $this->client->get("{$this->endpoint}/{$davCode}/item/{$itemNumber}", $params);
 
         /** @var array<int, array<string, mixed>> $data */
         $data = $response->json() ?? [];
@@ -153,9 +153,9 @@ class Dav extends Resource
      *
      * @return array<string, mixed>
      */
-    public function findItem(string $codigoDAV, string $nrItem, string $codigo): array
+    public function findItem(string $davCode, string $itemNumber, string $code): array
     {
-        $response = $this->client->get("{$this->endpoint}/{$codigoDAV}/item/{$nrItem}/{$codigo}");
+        $response = $this->client->get("{$this->endpoint}/{$davCode}/item/{$itemNumber}/{$code}");
 
         /** @var array<string, mixed> $data */
         $data = $response->json() ?? [];
@@ -169,9 +169,9 @@ class Dav extends Resource
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    public function updateItemQuantity(string $codigoDAV, string $nrItem, int $tipoDocumento, array $data): array
+    public function updateItemQuantity(string $davCode, string $itemNumber, int $documentType, array $data): array
     {
-        $response = $this->client->put("{$this->endpoint}/{$codigoDAV}/item/{$nrItem}/quantidade/{$tipoDocumento}", $data);
+        $response = $this->client->put("{$this->endpoint}/{$davCode}/item/{$itemNumber}/quantidade/{$documentType}", $data);
 
         /** @var array<string, mixed> $result */
         $result = $response->json() ?? [];
@@ -182,9 +182,9 @@ class Dav extends Resource
     /**
      * Delete an item.
      */
-    public function deleteItem(string $codigoDAV, string $nrItem, int $tipoDocumento): bool
+    public function deleteItem(string $davCode, string $itemNumber, int $documentType): bool
     {
-        $response = $this->client->delete("{$this->endpoint}/{$codigoDAV}/item/{$nrItem}/quantidade/{$tipoDocumento}");
+        $response = $this->client->delete("{$this->endpoint}/{$davCode}/item/{$itemNumber}/quantidade/{$documentType}");
 
         return $response->successful();
     }
