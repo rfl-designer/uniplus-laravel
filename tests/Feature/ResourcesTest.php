@@ -805,7 +805,7 @@ describe('OrdemServico Resource (Writable)', function () {
         ]);
 
         $manager = app(UniplusManager::class);
-        $result = $manager->ordemServico()->changeStatus('OS001', 3, '123');
+        $result = $manager->ordemServico()->changeStatus('OS001', 3, 123);
 
         expect($result['status'])->toBe(3);
 
@@ -813,7 +813,7 @@ describe('OrdemServico Resource (Writable)', function () {
             return $request->method() === 'POST'
                 && $request->url() === 'https://api.test.uniplus.com/public-api/v1/ordem-servico/alterar-status'
                 && $request->data() === [
-                    'id' => '123',
+                    'id' => 123,
                     'codigo' => 'OS001',
                     'status' => 3,
                 ];
@@ -869,12 +869,46 @@ describe('OrdemServico Resource (Writable)', function () {
             return $request->method() === 'POST'
                 && $request->url() === 'https://api.test.uniplus.com/public-api/v1/ordem-servico/item'
                 && $request->data() === [
+                    'valorDesconto' => 10.0,
                     'codigo' => 'OS001',
                     'itens' => [
                         ['codigoProduto' => 'PROD001', 'quantidade' => 2],
                     ],
-                    'valorDesconto' => 10.0,
                 ];
+        });
+    });
+
+    it('does not let additionalData overwrite the required codigo/itens fields when adding items', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/ordem-servico/item' => Http::response([
+                'codigo' => 'OS001',
+            ], 201),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $manager->ordemServico()->addItems('OS001', [
+            ['codigoProduto' => 'PROD001', 'quantidade' => 2],
+        ], [
+            'codigo' => 'SHOULD-NOT-WIN',
+            'itens' => 'SHOULD-NOT-WIN',
+            'valorDesconto' => 10.0,
+        ]);
+
+        Http::assertSent(function ($request) {
+            if ($request->method() !== 'POST' || $request->url() !== 'https://api.test.uniplus.com/public-api/v1/ordem-servico/item') {
+                return false;
+            }
+
+            $data = $request->data();
+
+            return $data['codigo'] === 'OS001'
+                && $data['itens'] === [['codigoProduto' => 'PROD001', 'quantidade' => 2]]
+                && $data['valorDesconto'] === 10.0;
         });
     });
 
@@ -918,7 +952,10 @@ describe('OrdemServico Resource (Writable)', function () {
         ]);
 
         $manager = app(UniplusManager::class);
-        $result = $manager->ordemServico()->removeItems('OS001', ['ITEM001', 'ITEM002']);
+        $result = $manager->ordemServico()->removeItems('OS001', [
+            ['id' => 101],
+            ['id' => 102],
+        ]);
 
         expect($result)->toBeTrue();
 
@@ -927,7 +964,10 @@ describe('OrdemServico Resource (Writable)', function () {
                 && $request->url() === 'https://api.test.uniplus.com/public-api/v1/ordem-servico/item'
                 && $request->data() === [
                     'codigo' => 'OS001',
-                    'itens' => ['ITEM001', 'ITEM002'],
+                    'itens' => [
+                        ['id' => 101],
+                        ['id' => 102],
+                    ],
                 ];
         });
     });

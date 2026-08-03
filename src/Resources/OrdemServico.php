@@ -175,13 +175,16 @@ class OrdemServico extends Resource
     /**
      * Change the status of a service order via the dedicated route.
      *
+     * The contract is not verifiable locally for int vs string on `codigo`/`id`;
+     * both are accepted and serialized exactly as given.
+     *
      * @return array<string, mixed>
      */
-    public function changeStatus(string $codigo, int $status, ?string $id = null): array
+    public function changeStatus(int|string $code, int $status, int|string|null $id = null): array
     {
         $data = $id === null
-            ? ['codigo' => $codigo, 'status' => $status]
-            : ['id' => $id, 'codigo' => $codigo, 'status' => $status];
+            ? ['codigo' => $code, 'status' => $status]
+            : ['id' => $id, 'codigo' => $code, 'status' => $status];
 
         $response = $this->client->post("{$this->endpoint}/alterar-status", $data);
 
@@ -194,13 +197,13 @@ class OrdemServico extends Resource
     /**
      * Add items to a service order.
      *
-     * @param  array<int, array<string, mixed>>  $itens
+     * @param  array<int, array<string, mixed>>  $items
      * @param  array<string, mixed>  $additionalData  Optional discount fields per the contract
      * @return array<string, mixed>
      */
-    public function addItems(string $codigo, array $itens, array $additionalData = []): array
+    public function addItems(int|string $code, array $items, array $additionalData = []): array
     {
-        $data = array_merge(['codigo' => $codigo, 'itens' => $itens], $additionalData);
+        $data = array_merge($additionalData, ['codigo' => $code, 'itens' => $items]);
 
         $response = $this->client->post("{$this->endpoint}/item", $data);
 
@@ -213,13 +216,13 @@ class OrdemServico extends Resource
     /**
      * Update items of a service order.
      *
-     * @param  array<int, array<string, mixed>>  $itens
+     * @param  array<int, array<string, mixed>>  $items
      * @param  array<string, mixed>  $additionalData  Optional discount fields per the contract
      * @return array<string, mixed>
      */
-    public function updateItems(string $codigo, array $itens, array $additionalData = []): array
+    public function updateItems(int|string $code, array $items, array $additionalData = []): array
     {
-        $data = array_merge(['codigo' => $codigo, 'itens' => $itens], $additionalData);
+        $data = array_merge($additionalData, ['codigo' => $code, 'itens' => $items]);
 
         $response = $this->client->put("{$this->endpoint}/item", $data);
 
@@ -235,13 +238,13 @@ class OrdemServico extends Resource
      * This is the contract's only DELETE-with-body operation; it is a
      * dedicated call and does not go through the generic delete().
      *
-     * @param  array<int, mixed>  $itens
+     * @param  array<int, mixed>  $items  Each item follows the contract's own representation
      */
-    public function removeItems(string $codigo, array $itens): bool
+    public function removeItems(int|string $code, array $items): bool
     {
         $response = $this->client->delete("{$this->endpoint}/item", [
-            'codigo' => $codigo,
-            'itens' => $itens,
+            'codigo' => $code,
+            'itens' => $items,
         ]);
 
         return $response->successful();
