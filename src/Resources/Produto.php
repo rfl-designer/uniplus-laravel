@@ -147,4 +147,25 @@ class Produto extends Resource
 
         return collect($data);
     }
+
+    /**
+     * Upload a product image as multipart/form-data. The "padrão" image
+     * type replaces the product's main image; other types are added as
+     * additional images.
+     *
+     * @return array<string, mixed>
+     */
+    public function uploadImagem(string $productCode, int $imageType, string $description, string $fileContents, string $filename): array
+    {
+        $response = $this->client->postMultipart('public-api/v1/produtos/imagens', $fileContents, $filename, [
+            'codigoProduto' => $productCode,
+            'tipoImagem' => $imageType,
+            'descricaoImagem' => $description,
+        ]);
+
+        /** @var array<string, mixed> $result */
+        $result = $response->json() ?? [];
+
+        return $result;
+    }
 }
