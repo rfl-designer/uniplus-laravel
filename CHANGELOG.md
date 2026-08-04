@@ -7,6 +7,18 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-08-04
+
+### Adicionado
+
+- **`OrdemServico` gravável** conforme o contrato: `create()`, `update()`, atualização de status e gestão de itens.
+- **Itens aninhados no recurso `Dav`**: endpoints dedicados para adicionar, atualizar e remover itens de um DAV.
+- **3 novos recursos somente leitura**: `DocumentoFinanceiro`, `FichaTecnica` e `EntidadeOcorrencia`.
+- **Rotas dedicadas de busca e sincronização** como métodos de primeira classe (ex.: `Produto::search()`, rotas de sync por timestamp).
+- **Operações em lote**: `Produto::updateMany()` (atualização em massa) e importação em lote de `Variacao`.
+- **Upload de imagem de produto** via `multipart/form-data`: `Produto::uploadImagem()`, com nova capacidade `Client::postMultipart()`.
+- **Escrita desbloqueada** em recursos que o contrato suporta: update de `Ean` e `RegistroProducao`; delete de `Embalagem`, `Variacao` e `RegistroProducao`.
+
 ### Corrigido
 
 - **Wire format da camada de escrita**, para bater com o contrato real da API Pública Uniplus (as chamadas antigas não funcionavam contra o contrato — bug fix, não breaking change funcional):
