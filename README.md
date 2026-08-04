@@ -22,7 +22,7 @@ Como este é um pacote privado, adicione o repositório ao seu `composer.json`:
         }
     ],
     "require": {
-        "rfl-designer/uniplus-laravel": "^1.0"
+        "rfl-designer/uniplus-laravel": "^2.2"
     }
 }
 ```
@@ -122,6 +122,27 @@ $ativos = Uniplus::produtos()->active()->get();
 $alterados = Uniplus::produtos()
     ->changedAfter(1616786400000)
     ->get();
+
+// Busca via rota dedicada de search
+$resultados = Uniplus::produtos()->search('caneta');
+
+// Incluindo inativos e filtrando por filial
+$resultados = Uniplus::produtos()->search('caneta', includeInactiveProducts: true, branchId: 1);
+```
+
+#### Upload de Imagem
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// O tipo "padrão" substitui a imagem principal; outros tipos adicionam imagens
+Uniplus::produtos()->uploadImagem(
+    productCode: '999000',
+    imageType: 1,
+    description: 'Foto principal',
+    fileContents: file_get_contents($caminho),
+    filename: 'produto.jpg',
+);
 ```
 
 #### Operações em Lote (Bulk)
@@ -157,6 +178,12 @@ Uniplus::produtos()->createMany([
     ['nome' => 'Produto 1', 'preco' => 99.90, 'unidadeMedida' => 'UN'],
     ['nome' => 'Produto 2', 'preco' => 149.90, 'unidadeMedida' => 'UN'],
 ]);
+
+// Atualizar múltiplos produtos de uma vez
+Uniplus::produtos()->updateMany([
+    ['codigo' => '001', 'nome' => 'Produto 1 Atualizado'],
+    ['codigo' => '002', 'nome' => 'Produto 2 Atualizado'],
+]);
 ```
 
 ### Entidades (Clientes, Fornecedores, etc.)
@@ -186,6 +213,15 @@ $cliente = Uniplus::entidades()->create([
     'cnpjCpf' => '123.456.789-00',
     'email' => 'joao@email.com',
 ]);
+
+// Busca via rota dedicada de search
+$resultados = Uniplus::entidades()->search('joão');
+
+// Filtrando por tipo de entidade
+$clientes = Uniplus::entidades()->search('joão', entityType: 1);
+
+// Entidades alteradas a partir de um ponteiro de sincronização
+$alteradas = Uniplus::entidades()->porAlteracao('1616786400000');
 ```
 
 ### DAVs (Pré-vendas, Orçamentos, Pedidos)
@@ -227,6 +263,24 @@ $dav = Uniplus::davs()->create([
         ],
     ],
 ]);
+```
+
+#### Itens de DAV
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Listar itens de um DAV
+$itens = Uniplus::davs()->items('101', '1');
+
+// Buscar item específico
+$item = Uniplus::davs()->findItem('101', '1', '97');
+
+// Atualizar quantidade de um item
+Uniplus::davs()->updateItemQuantity('101', '1', 1, ['quantidade' => 5]);
+
+// Remover item
+Uniplus::davs()->deleteItem('101', '1', 1);
 ```
 
 ### Saldo de Estoque
@@ -328,12 +382,42 @@ $ordens = Uniplus::ordemServico()->all();
 $abertas = Uniplus::ordemServico()->open()->get();
 
 // Em execução
-$emExecucao = Uniplus::ordemServico()->inProgress()->get();
+$emExecucao = Uniplus::ordemServico()->inExecution()->get();
 
 // Por cliente
 $ordens = Uniplus::ordemServico()
     ->byClient('CLI001')
     ->get();
+
+// Criar ordem de serviço
+$ordem = Uniplus::ordemServico()->create([
+    'codigo' => 'OS001',
+    'cliente' => 'CLI001',
+    'descricao' => 'Manutenção preventiva',
+]);
+
+// Atualizar ordem de serviço
+Uniplus::ordemServico()->update([
+    'codigo' => 'OS001',
+    'descricao' => 'Manutenção corretiva',
+]);
+
+// Alterar status
+Uniplus::ordemServico()->changeStatus('OS001', 2);
+
+// Gerenciar itens
+Uniplus::ordemServico()->addItems('OS001', [
+    ['produto' => '97', 'quantidade' => 1, 'precoUnitario' => 150.00],
+]);
+Uniplus::ordemServico()->updateItems('OS001', [
+    ['produto' => '97', 'quantidade' => 2],
+]);
+Uniplus::ordemServico()->removeItems('OS001', [
+    ['produto' => '97'],
+]);
+
+// Deletar ordem de serviço
+Uniplus::ordemServico()->delete('OS001');
 ```
 
 ### Tipos de Documento Financeiro
@@ -374,6 +458,12 @@ Uniplus::eans()->create([
     'ean' => '7891234567890',
 ]);
 
+// Atualizar EAN
+Uniplus::eans()->update([
+    'codigoProduto' => 'PROD001',
+    'ean' => '7891234567890',
+]);
+
 // Deletar EAN
 Uniplus::eans()->delete('7891234567890');
 ```
@@ -395,6 +485,12 @@ Uniplus::embalagens()->create([
     'tipoEmbalagem' => 1,
     'quantidade' => 12,
 ]);
+
+// Deletar embalagem
+Uniplus::embalagens()->delete('EMB001');
+
+// Embalagens de um produto via rota dedicada
+$embalagens = Uniplus::embalagens()->porProduto('PROD001');
 ```
 
 ### Variações de Produtos
@@ -413,6 +509,19 @@ $linhas = Uniplus::variacoes()->rows()->get();
 
 // Variações de coluna
 $colunas = Uniplus::variacoes()->columns()->get();
+
+// Criar e atualizar variação
+Uniplus::variacoes()->addVariation(['codigoProduto' => 'PROD001', 'grade' => 'COR', 'descricao' => 'Azul']);
+Uniplus::variacoes()->updateVariation(['codigo' => 'VAR001', 'descricao' => 'Azul Marinho']);
+
+// Importar múltiplas variações de uma vez
+Uniplus::variacoes()->importMany([
+    ['codigoProduto' => 'PROD001', 'grade' => 'COR', 'descricao' => 'Azul'],
+    ['codigoProduto' => 'PROD001', 'grade' => 'COR', 'descricao' => 'Vermelho'],
+]);
+
+// Deletar variação
+Uniplus::variacoes()->delete('VAR001');
 ```
 
 ### Registro de Produção
@@ -437,6 +546,48 @@ Uniplus::registroProducao()->createRecord([
         ['idProduto' => 123, 'quantidade' => 100],
     ],
 ]);
+
+// Atualizar registro
+Uniplus::registroProducao()->update([
+    'codigo' => 'REG001',
+    'descricao' => 'Produção do dia - ajustada',
+]);
+
+// Deletar registro
+Uniplus::registroProducao()->delete('REG001');
+```
+
+### Documentos Financeiros (Somente Leitura)
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Listar documentos financeiros
+$documentos = Uniplus::documentoFinanceiro()->all();
+
+// Obter o boleto de um documento
+$boleto = Uniplus::documentoFinanceiro()->boleto('DOC001');
+```
+
+### Fichas Técnicas (Somente Leitura)
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Listar fichas técnicas
+$fichas = Uniplus::fichaTecnica()->all();
+
+// Buscar por código
+$ficha = Uniplus::fichaTecnica()->find('FT001');
+```
+
+### Ocorrências de Entidades (Somente Leitura)
+
+```php
+use Uniplus\Facades\Uniplus;
+
+// Listar ocorrências
+$ocorrencias = Uniplus::entidadeOcorrencias()->all();
 ```
 
 ### Conta Gourmet
