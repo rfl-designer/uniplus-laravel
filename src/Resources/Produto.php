@@ -102,6 +102,28 @@ class Produto extends Resource
     }
 
     /**
+     * Update multiple products at once.
+     *
+     * @param  array<int, array<string, mixed>>  $products
+     * @return array<string, mixed>
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function updateMany(array $products): array
+    {
+        if (empty($products)) {
+            throw new \InvalidArgumentException('Products array cannot be empty.');
+        }
+
+        $response = $this->client->put('public-api/v1/produtos/lista', $products);
+
+        /** @var array<string, mixed> $result */
+        $result = $response->json() ?? [];
+
+        return $result;
+    }
+
+    /**
      * Search products via the dedicated search route.
      *
      * @return Collection<int, array<string, mixed>>

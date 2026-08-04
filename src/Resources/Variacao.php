@@ -96,4 +96,26 @@ class Variacao extends Resource
     {
         return $this->update($data);
     }
+
+    /**
+     * Import multiple variations at once.
+     *
+     * @param  array<int, array<string, mixed>>  $variations
+     * @return array<string, mixed>
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function importMany(array $variations): array
+    {
+        if (empty($variations)) {
+            throw new \InvalidArgumentException('Variations array cannot be empty.');
+        }
+
+        $response = $this->client->post('public-api/v1/variacoes/importar', $variations);
+
+        /** @var array<string, mixed> $result */
+        $result = $response->json() ?? [];
+
+        return $result;
+    }
 }

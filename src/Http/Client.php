@@ -65,7 +65,7 @@ class Client
     /**
      * Make a PUT request.
      *
-     * @param  array<string, mixed>  $data
+     * @param  array<array-key, mixed>  $data
      */
     public function put(string $endpoint, array $data = []): Response
     {

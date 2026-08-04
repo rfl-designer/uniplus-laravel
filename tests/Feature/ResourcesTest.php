@@ -312,6 +312,47 @@ describe('Produto Resource', function () {
         $manager = app(UniplusManager::class);
         $manager->produtos()->createMany([]);
     })->throws(InvalidArgumentException::class, 'Products array cannot be empty.');
+
+    it('can update multiple products at once, sent as a raw array without a wrapper', function () {
+        Http::fake([
+            '*/oauth/token' => Http::response([
+                'access_token' => 'test-token',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ]),
+            '*/public-api/v1/produtos/lista' => Http::response([
+                'success' => true,
+                'updated' => 2,
+            ]),
+        ]);
+
+        $manager = app(UniplusManager::class);
+        $result = $manager->produtos()->updateMany([
+            ['codigo' => '001', 'nome' => 'Produto 1 atualizado'],
+            ['codigo' => '002', 'nome' => 'Produto 2 atualizado'],
+        ]);
+
+        expect($result['success'])->toBeTrue()
+            ->and($result['updated'])->toBe(2);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'PUT'
+                && $request->url() === 'https://api.test.uniplus.com/public-api/v1/produtos/lista'
+                && $request->data() === [
+                    ['codigo' => '001', 'nome' => 'Produto 1 atualizado'],
+                    ['codigo' => '002', 'nome' => 'Produto 2 atualizado'],
+                ];
+        });
+    });
+
+    it('throws exception when updateMany receives empty array without sending a request', function () {
+        $manager = app(UniplusManager::class);
+
+        expect(fn () => $manager->produtos()->updateMany([]))
+            ->toThrow(InvalidArgumentException::class, 'Products array cannot be empty.');
+
+        Http::assertNothingSent();
+    });
 });
 
 describe('Produto Resource - Rota dedicada de busca (S6)', function () {
