@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
+use Illuminate\Support\Collection;
 use Uniplus\Query\Builder;
 
 class Produto extends Resource
@@ -98,6 +99,53 @@ class Produto extends Resource
         $result = $response->json() ?? [];
 
         return $result;
+    }
+
+    /**
+     * Update multiple products at once.
+     *
+     * @param  array<int, array<string, mixed>>  $products
+     * @return array<string, mixed>
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function updateMany(array $products): array
+    {
+        if (empty($products)) {
+            throw new \InvalidArgumentException('Products array cannot be empty.');
+        }
+
+        $response = $this->client->put('public-api/v1/produtos/lista', $products);
+
+        /** @var array<string, mixed> $result */
+        $result = $response->json() ?? [];
+
+        return $result;
+    }
+
+    /**
+     * Search products via the dedicated search route.
+     *
+     * @return Collection<int, array<string, mixed>>
+     */
+    public function search(string $searchParam, ?bool $includeInactiveProducts = null, ?int $branchId = null): Collection
+    {
+        $query = ['searchParam' => $searchParam];
+
+        if ($includeInactiveProducts !== null) {
+            $query['produtosInativos'] = $includeInactiveProducts ? 'true' : 'false';
+        }
+
+        if ($branchId !== null) {
+            $query['idFilial'] = $branchId;
+        }
+
+        $response = $this->client->get("{$this->endpoint}/search", $query);
+
+        /** @var array<int, array<string, mixed>> $data */
+        $data = $response->json() ?? [];
+
+        return collect($data);
     }
 
     /**

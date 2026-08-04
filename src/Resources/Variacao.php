@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
-use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 
 /**
  * Product variations (grid/size/color) resource.
  *
  * Endpoint: /public-api/v1/variacoes
- * Methods: GET, POST, PUT
+ * Methods: GET, POST, PUT, DELETE
  */
 class Variacao extends Resource
 {
@@ -99,12 +98,24 @@ class Variacao extends Resource
     }
 
     /**
-     * Delete is not supported for variations.
+     * Import multiple variations at once.
      *
-     * @throws UniplusException
+     * @param  array<int, array<string, mixed>>  $variations
+     * @return array<string, mixed>
+     *
+     * @throws \InvalidArgumentException
      */
-    public function delete(string $code): bool
+    public function importMany(array $variations): array
     {
-        throw new UniplusException('Delete operation is not supported for Variacoes.');
+        if (empty($variations)) {
+            throw new \InvalidArgumentException('Variations array cannot be empty.');
+        }
+
+        $response = $this->client->post('public-api/v1/variacoes/importar', $variations);
+
+        /** @var array<string, mixed> $result */
+        $result = $response->json() ?? [];
+
+        return $result;
     }
 }

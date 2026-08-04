@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
-use Uniplus\Exceptions\UniplusException;
+use Illuminate\Support\Collection;
 use Uniplus\Query\Builder;
 
 /**
  * Product packaging resource.
  *
  * Endpoint: /public-api/v1/embalagens
- * Methods: GET, POST, PUT
+ * Methods: GET, POST, PUT, DELETE
  */
 class Embalagem extends Resource
 {
@@ -109,12 +109,24 @@ class Embalagem extends Resource
     }
 
     /**
-     * Delete is not supported for Embalagens.
+     * List packaging for a product via the dedicated route.
      *
-     * @throws UniplusException
+     * @param  array<int, int>|null  $types
+     * @return Collection<int, array<string, mixed>>
      */
-    public function delete(string $code): bool
+    public function porProduto(string $productCode, ?array $types = null): Collection
     {
-        throw new UniplusException('Delete operation is not supported for Embalagens.');
+        $query = ['codigoProduto' => $productCode];
+
+        if ($types !== null) {
+            $query['tipos'] = $types;
+        }
+
+        $response = $this->client->get("{$this->endpoint}/por-produto", $query);
+
+        /** @var array<int, array<string, mixed>> $data */
+        $data = $response->json() ?? [];
+
+        return collect($data);
     }
 }

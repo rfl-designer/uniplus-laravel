@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Uniplus\Resources;
 
-use Uniplus\Exceptions\UniplusException;
 use Uniplus\Query\Builder;
 
 /**
  * Production record resource.
  *
  * Endpoint: /public-api/v1/registro-producao
- * Methods: GET, POST
+ * Methods: GET, POST, PUT, DELETE
  */
 class RegistroProducao extends Resource
 {
@@ -87,28 +86,5 @@ class RegistroProducao extends Resource
     public function createRecord(array $data): array
     {
         return $this->create($data);
-    }
-
-    /**
-     * Update is not supported for production records.
-     *
-     * @param  array<string, mixed>  $data
-     * @return array<string, mixed>
-     *
-     * @throws UniplusException
-     */
-    public function update(array $data): array
-    {
-        throw new UniplusException('Update operation is not supported for RegistroProducao.');
-    }
-
-    /**
-     * Delete is not supported for production records.
-     *
-     * @throws UniplusException
-     */
-    public function delete(string $code): bool
-    {
-        throw new UniplusException('Delete operation is not supported for RegistroProducao.');
     }
 }
